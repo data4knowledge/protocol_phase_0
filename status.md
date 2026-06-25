@@ -2,6 +2,28 @@
 
 Log of actions undertaken. Newest first. Append a dated entry at the end of any session that changed state.
 
+## 2026-06-25 (eve, 7) — Both USDM questions closed as non-issues; pattern stated; session paused
+
+- **Both USDM questions are non-issues.** Q1 (challenge anchor) was never a real question — a timeline times events off other events; "study drug" vs "challenge" is a clinical label, not a modelling one. Q2 (narrative round-trip) is no delta — USDM stores activities + times, not a table.
+- **The archetype reduces to one claim (Dave):** every case is an **intervention with timing measured from it** — usually after, sometimes before (prep). That is ordinary timeline behaviour → no USDM problem.
+- **NOT yet verified against the real protocols.** I twice trusted the `phase0_candidates_judged.md` one-liners and got burned (NCT03306589's LPS is the study drug, not a challenge). Open task = mount `protocol_corpus`, read all 12 extracted schedules, confirm each is intervention-anchored, flag any that aren't. Doubt up front: NCT03861000 (no grid), NCT04204993 (multi-day influenza).
+- **Session paused by Dave** — pick up at next_steps item 3.
+
+## 2026-06-25 (eve, 6) — Resolved verdicts; answered both USDM questions by tracing DDF-RA v4.0
+
+- **Borderlines resolved (Dave):** IN set = **12** — the 11 clean IN + **NCT04204993** (influenza challenge, kept as the days-scale challenge edge case). **NCT03958630** (TSPO multi-year longitudinal) set aside; stays in corpus, out of Phase-0. 3 OUT unchanged.
+- **Mounted `DDF-RA` and traced both Job-3 USDM questions** against `API/USDM_API.json` + `CT/USDM_CT.xlsx` + `RULES/USDM_CORE_Rules.xlsx` (v4.0). Full answers + rule IDs in `lessons_learned.md`.
+  - **Q1 challenge anchor = not a real question** (Dave). A timeline times events off other events — that's what timelines do; "study drug" vs "challenge" is a clinical label, not a modelling one. CT carries a "Challenge Agent" role (C158128) as an optional label, nothing more. (NCT03306589's LPS is the study drug — my "3h post-LPS challenge" example was wrong, pulled from the summary table not the protocol.)
+  - **Q2 narrative round-trip = YES, no delta** (corrected — first answer "flow skeleton delta" was wrong, Dave called it). SoA is a timing graph not a matrix; narrative supplies activities + timings = the graph's content. The timeline container (mainTimeline DDF00012, exit DDF00108/DDF00037, Fixed Reference anchor DDF00009, ordering DDF00008) is unconditional on EVERY timeline → a gridded protocol needs the identical scaffolding, so it's not invented from the narrative and not a Phase-0 delta. The ISO8601 "throughout" worry repeated the already-settled continuous-monitoring case (cycling sub-timeline + elapsed-time exit), not a gap.
+- **Both USDM questions land on NO delta.** Net so far: the Phase-0 archetype's two candidate USDM frictions (challenge anchor, narrative-only schedule) both dissolve on tracing — USDM handles them with existing primitives + CT.
+- **Next:** write Part 2 (the 12-protocol set) + Part 3 (SoA characterisation + USDM delta) of `docs/report/phase0_soa.md` and rebuild HTML.
+
+## 2026-06-25 (eve, 5) — Corpus repo hygiene (sidecars/markers); lean cleanup reverted
+
+- **Decision: keep ie/soa/schema.pdf sidecars AND `.*_pdf_autogen` markers tracked.** Dave uses the sidecars to navigate; untracking risks loss on clone/`git clean`. Markers must stay paired (sidecar with no marker reads as curated → build won't regenerate). See `lessons_learned.md` → Corpus repo hygiene.
+- **What the markers are:** a note beside each auto-made sub-extract PDF storing its page range (duplicates `unvalidated.pages.<section>` — verified identical) plus the one bit it uniquely carries: autogen (overwrite OK) vs reviewer-curated (leave). Could be folded into the data model — logged in corpus `docs/next_steps.md` → Tidy-up backlog.
+- **Lean-repo cleanup considered then REJECTED.** I had Dave run a `git rm --cached` over 1038 derived files; we then decided sidecars must stay. Left the repo half-done (1038 staged deletions + same 1038 now untracked = the "1K files" churn). Fix: **`git reset`** from corpus root (index-only, disk untouched) → restores all to tracked; only the 16 new protocols (97 files) remain as legit new content to commit. `.gitignore` already reverted; temp list files removed.
+
 ## 2026-06-25 (eve, 4) — Judged the 16; Job 3 characterisation begun
 
 - **Read all 16** (4 from extracted SoA, 12 via subagents). Verdicts: **11 IN, 2 BORDERLINE, 3 OUT** — full table + reasons in `docs/phase0_candidates_judged.md`. Phase-0 set ~triples.
