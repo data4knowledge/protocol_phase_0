@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Single-Day Experimental Medicine Studies — SoA Patterns and USDM Impact</title>
+<style>
+/* ============================================================
+   d4k report theme
+   Canonical stylesheet for markdown-driven HTML reports.
+   Edit here; run sync_into.py to push to consuming repos.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+:root{
+  /* --- d4k brand (exact, per D4K Brand Guide) --- */
+  --navy:#122140;          /* primary: headings, header band, table head (RGB 18 33 64) */
+  --navy-700:#243a66;      /* lighter navy for links (derived) */
+  --amber:#F5B200;         /* accent: rules, the "4", blockquote edge (RGB 245 178 0) */
+  --amber-soft:#fdf3d4;    /* amber wash for callouts/quotes (derived tint) */
+  /* --- neutrals --- */
+  --ink:#1f2a37;
+  --muted:#5c6b7e;
+  --line:#e3e8ef;
+  --bg-soft:#f4f4f4;       /* brand light grey (RGB 246 246 246 / #f4f4f4) */
+  /* --- type: IBM Plex (web font) for reports. Sans heads, serif body,
+         mono code — lining figures, coordinated faces. Brand slide fonts
+         (Bai Jamjuree / Barlow) stay on slides. --- */
+  --font-head:'IBM Plex Sans','Helvetica Neue','Segoe UI',system-ui,Arial,sans-serif;
+  --font-body:'IBM Plex Serif',Georgia,Cambria,serif;
+  --font-mono:'IBM Plex Mono','SF Mono',Consolas,Menlo,monospace;
+}
+
+*{box-sizing:border-box;}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+body{
+  font-family:var(--font-body);
+  color:var(--ink);
+  line-height:1.55;
+  margin:0;
+  font-size:15px;
+  background:#fff;
+}
+
+/* ---- brand header band ---- */
+.d4k-band{background:var(--navy);color:#fff;}
+.d4k-band-inner{
+  max-width:820px;margin:0 auto;padding:14px 28px;
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+}
+.d4k-wordmark{
+  font-family:var(--font-head);font-weight:700;
+  font-size:20px;letter-spacing:-.01em;color:#fff;white-space:nowrap;
+}
+.d4k-wordmark .four{color:var(--amber);}
+.d4k-kicker{
+  font-family:var(--font-body);font-size:10.5px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:#aebbd2;text-align:right;
+}
+
+/* ---- content ---- */
+main{max-width:820px;margin:0 auto;padding:6px 28px 40px;}
+h1,h2,h3,h4{font-family:var(--font-head);color:var(--navy);line-height:1.22;}
+h1{font-size:26px;margin:26px 0 4px;padding-bottom:11px;border-bottom:3px solid var(--amber);}
+h2{font-size:19px;margin-top:32px;padding-bottom:5px;border-bottom:1px solid var(--line);}
+h3{font-size:15.5px;margin-top:22px;}
+h4{font-size:14px;margin-top:18px;color:var(--muted);}
+
+/* ---- report title block (centered title page) ---- */
+.report-title{text-align:center;margin:34px 0 14px;}
+.report-title h1{font-size:38px;border-bottom:none;padding-bottom:0;margin:0 0 14px;}
+.report-title .subtitle{font-size:20px;color:var(--muted);font-style:italic;margin:0 0 10px;line-height:1.3;}
+.report-title .docmeta{font-size:14px;color:var(--muted);font-style:italic;margin:0;}
+p,li{font-size:15px;}
+em{color:var(--muted);}
+a{color:var(--navy-700);}
+strong{color:var(--navy);}
+code{font-family:var(--font-mono);font-size:12px;background:var(--bg-soft);padding:1px 5px;border-radius:4px;color:var(--navy);}
+pre{background:var(--bg-soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow:auto;font-size:12px;}
+pre code{background:none;padding:0;color:var(--ink);}
+
+blockquote{
+  color:var(--ink);border-left:3px solid var(--amber);background:var(--amber-soft);
+  margin:16px 0;padding:10px 16px;font-size:13.8px;border-radius:0 5px 5px 0;
+}
+blockquote p{font-size:13.8px;margin:6px 0;}
+
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:12.8px;font-family:var(--font-body);}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top;}
+thead th{background:var(--navy);color:#fff;font-weight:700;border-color:var(--navy);}
+tbody tr:nth-child(even) td{background:var(--bg-soft);}
+/* highlighted column (e.g. a dosing day): th.hl / td.hl */
+th.hl{background:#33508a;}                 /* navy tint, stays legible white-on-navy */
+td.hl{background:var(--amber-soft);}
+
+/* inline prevalence figure after a card heading: <span class="prev">34%</span> */
+.prev{font-family:var(--font-body);font-weight:400;font-size:.62em;color:var(--muted);vertical-align:middle;margin-left:.5em;}
+
+/* pattern-atlas cards: a 2-up grid of boxed cards (not one section per pattern) */
+.card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin:20px 0;}
+.card{border:1px solid var(--line);border-radius:8px;padding:14px 16px 12px;page-break-inside:avoid;}
+.card .card-head{font-family:var(--font-head);font-size:16px;color:var(--navy);margin:0 0 6px;padding:0;border:0;line-height:1.3;}
+.card .card-head .slug{font-family:var(--font-mono);font-size:.9em;font-weight:600;background:#e9eef5;color:var(--navy);padding:2px 8px;border-radius:5px;margin-right:.35em;}
+.card .card-head .prev{font-size:.62em;}
+.card p,.card li{font-size:13px;}
+.card > p:first-of-type{margin-top:2px;}
+.card table{font-size:11px;margin:10px 0;}
+.card th,.card td{padding:5px 7px;}
+.card strong{color:var(--navy);}
+@media(max-width:640px){.card-grid{grid-template-columns:1fr;}}
+@media print{.card-grid{gap:10px;}}
+
+hr{border:0;border-top:1px solid var(--line);margin:26px 0;}
+
+/* ---- figures (inline SVG diagrams, like the existing reports) ---- */
+figure{margin:22px 0;text-align:center;page-break-inside:avoid;}
+figure svg,figure img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;}
+figcaption{font-family:var(--font-body);font-size:11.5px;color:var(--muted);margin-top:6px;}
+
+/* ---- optional callout box: use a blockquote starting with **Note:** etc, or raw html ---- */
+.callout{
+  background:var(--bg-soft);border:1px solid var(--line);border-top:3px solid var(--navy);
+  border-radius:6px;padding:12px 16px;margin:18px 0;
+  font-family:var(--font-body);font-size:13px;
+}
+.callout .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-bottom:4px;}
+
+/* ---- footer ---- */
+.d4k-foot{
+  border-top:1px solid var(--line);max-width:820px;margin:30px auto 0;padding:14px 28px 26px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  font-family:var(--font-body);font-size:11px;color:var(--muted);
+}
+.d4k-foot .mark{font-weight:800;font-size:15px;color:var(--navy);letter-spacing:-.02em;}
+.d4k-foot .mark .four{color:var(--amber);}
+
+@media print{
+  .d4k-band-inner,main,.d4k-foot{max-width:none;}
+  body{font-size:11.5pt;}
+  h1{font-size:19pt;} h2{font-size:14pt;page-break-after:avoid;} h3{font-size:12pt;page-break-after:avoid;}
+  .report-title h1{font-size:26pt;} .report-title .subtitle{font-size:14pt;} .report-title .docmeta{font-size:10pt;}
+  p,li{font-size:11pt;} table{font-size:9.5pt;} blockquote p{font-size:10.5pt;}
+  table,blockquote,.callout,figure{page-break-inside:avoid;}
+  a{color:var(--ink);text-decoration:none;}
+}
+@page{margin:16mm;size:A4;}
+
+</style>
+</head>
+<body>
+
+<div class="d4k-band">
+  <div class="d4k-band-inner">
+    <span class="d4k-wordmark">data<span class="four">4</span>knowledge</span>
+    <span class="d4k-kicker">protocol_phase_0 · report</span>
+  </div>
+</div>
+
+<main>
+<h1 id="single-day-experimental-medicine-studies-soa-patterns-and-usdm-impact">Single-Day Experimental Medicine Studies — SoA Patterns and USDM Impact</h1>
+<h2 id="summary">Summary</h2>
+<p>This report examines one specific, under-represented type of clinical trial — the <strong>single-day "experimental medicine" / Phase 0 study</strong> — and asks what its Schedule of Activities (SoA) requires of the CDISC Unified Study Definitions Model (USDM).</p>
+<p>It is a companion to the general <a href="../../../protocol_soa_patterns/docs/reports/soa_patterns.html">SoA and Footnote Patterns report</a>, which catalogued twelve SoA patterns and twenty-one footnote categories across 169 protocols and showed USDM carries them all. That scan is <strong>thin on exactly this population</strong>: short, intensive, dosing-anchored studies with little or no conventional visit structure. This report fills that gap — it characterises the SoAs of these studies and identifies any issue they raise for USDM <strong>beyond</strong> the existing pattern atlas.</p>
+<p>The report is in three parts:</p>
+<ul>
+<li><strong>Part 1</strong> defines the study type and fixes the terminology.</li>
+<li><strong>Part 2</strong> presents the protocol set assembled for the analysis (sourced from ClinicalTrials.gov, real posted protocol documents only).</li>
+<li><strong>Part 3</strong> characterises the SoAs and assesses the specific USDM impact.</li>
+</ul>
+<blockquote>
+<p><strong>Status: draft / in progress.</strong> Part 1 is complete. Parts 2 and 3 are placeholders pending the protocol search (job 2) and SoA characterisation (job 3).</p>
+</blockquote>
+<h2 id="part-1-what-these-studies-are">Part 1 · What these studies are</h2>
+<h3 id="11-definition">1.1 Definition</h3>
+<p>A <strong>Phase 0 / exploratory study</strong> is a first-in-human trial that gives a <em>sub-therapeutic</em> exposure of a drug under a reduced preclinical package, purely to gather early PK, PD, mechanistic or imaging data — not to assess safety/tolerability or efficacy, and not intended to produce therapeutic benefit. The defining feature is the dose: low enough that risk is negligible, so the study sits <em>before</em> a conventional Phase 1.</p>
+<p>The specific type of interest here is narrower than "Phase 0" in general. It is the <strong>single-day experimental medicine</strong> study: short (often a single day), small population, dosing-anchored schedule, and little or no conventional visit structure. This population is under-represented in existing protocol collections, which is why it warrants its own treatment.</p>
+<p>The tightest well-defined sub-class is the <strong>microdose study</strong>: a dose below all of ≤ 100 µg total, ≤ 1/100th of the NOAEL, and ≤ 1/100th of the pharmacologically active dose (≤ 30 nmol for protein/biologic products). ICH M3(R2) sets out five example exploratory-trial approaches; the FDA Exploratory IND guidance (2006) created the "Phase 0" route in the US; EMA aligns with ICH.</p>
+<p>A practical note that matters for searching: <strong>ClinicalTrials.gov has no "Phase 0" value</strong> — these register as <strong>"Early Phase 1"</strong>.</p>
+<h3 id="12-terminology">1.2 Terminology</h3>
+<p>The terms seen for this class of protocol, grouped by what they denote:</p>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Terms</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Umbrella / regulatory</td>
+<td>Phase 0; exploratory clinical trial (ICH M3(R2)); exploratory IND / eIND (FDA); Early Phase 1 (ct.gov label); experimental medicine; first-in-human exploratory</td>
+</tr>
+<tr>
+<td>Dose class</td>
+<td>microdose / microdosing; sub-therapeutic; sub-pharmacological / sub-clinical; tracer dose</td>
+</tr>
+<tr>
+<td>Methodology / readout</td>
+<td>microtracer (¹⁴C); AMS (accelerator mass spectrometry); PET microdosing; LC-MS/MS bioanalysis; optical / fluorescence imaging microdose; radiolabelled microdose / dosimetry</td>
+</tr>
+<tr>
+<td>Design variant</td>
+<td>cassette / cocktail microdosing; Intra-Target Microdosing (ITM); microtracer absolute bioavailability; adaptive Phase 0/1</td>
+</tr>
+</tbody>
+</table>
+<p>"EMP" — a term used informally for these studies — is <strong>unconfirmed</strong>; the field is "Experimental Medicine (EM)", so the best guess is "Experimental Medicine Protocol", but this is not verified.</p>
+<p><strong>Excluded</strong> (named to keep the search clean): conventional Phase 1 SAD/MAD; oncology "window-of-opportunity" studies that carry the Phase 0 label but are not sub-therapeutic; psychedelic "microdosing"; therapeutic-dose mass-balance / ADME.</p>
+<h2 id="part-2-the-protocol-set">Part 2 · The protocol set</h2>
+<blockquote>
+<p><em>Placeholder — to be populated by the ClinicalTrials.gov search (job 2).</em></p>
+</blockquote>
+<p>Inclusion rule: registered as Early Phase 1 (or explicitly exploratory IND / Phase 0), sub-therapeutic with no therapeutic intent, single-day / short intensive design, <strong>and a real protocol PDF posted on ClinicalTrials.gov</strong>. The posted-PDF requirement is the binding constraint — most studies of this type never post one.</p>
+<p>Currently in the corpus: NCT02901925 (ABY-029, fluorescence-guided microdose, recurrent glioma) and NCT01532024 (NAP, optical imaging probe, acute lung injury). Both are imaging microdose studies rather than classic AMS/PK microdosing.</p>
+<h2 id="part-3-soa-characterisation-and-usdm-impact">Part 3 · SoA characterisation and USDM impact</h2>
+<blockquote>
+<p><em>Placeholder — to be populated by the SoA characterisation (job 3).</em></p>
+</blockquote>
+<p>The baseline is the twelve-pattern atlas from the companion report, which USDM already covers (only two soft enhancement candidates: <code>state_preparation</code> and <code>activity_variant</code>). The relevant primitives for this study type are likely:</p>
+<ul>
+<li><strong><code>pk_profile</code> (dense PK sampling, 68% in the general scan)</strong> — hour/minute-resolution sampling around a dosing event, represented in USDM as a sub-timeline anchored on the dose.</li>
+<li><strong>Asynchronous timelines</strong> and <strong>cycles-as-decision-loop</strong> — these represent periodic / continuous monitoring ("measure X every N minutes", continuous telemetry) as a separate timeline that cycles the activity with an exit condition on elapsed time. Not a gap.</li>
+</ul>
+<p>The open question this report answers: do single-day / no-conventional-visit experimental medicine protocols introduce or stress any pattern <strong>beyond</strong> these twelve — in particular, is the collapse of the visit/Encounter axis (everything timed relative to dosing, within one encounter or a continuous stay) absorbed cleanly by USDM's Encounter-modality and main-timeline primitives, or does it expose a specific requirement?</p>
+<h2 id="references">References</h2>
+<ul>
+<li>Companion report: <code>protocol_soa_patterns/docs/reports/soa_patterns.html</code> — SoA and Footnote Patterns.</li>
+<li>Working definition and full terminology: <code>docs/phase0_definition_and_terms.md</code>.</li>
+<li>ICH M3(R2); FDA Exploratory IND Guidance (2006); EMA M3(R2); Phase-0 Microdosing Network.</li>
+</ul>
+</main>
+
+<div class="d4k-foot">
+  <span><span class="mark">d<span class="four">4</span>k</span>&nbsp;&nbsp;data4knowledge</span>
+  <span>Phase 0 Experimental Medicine SoA · draft · 2026-06-25</span>
+</div>
+
+</body>
+</html>
