@@ -31,7 +31,10 @@ https://clinicaltrials.gov/api/v2/studies?query.term=microdose%20OR%20microdosin
 ```
 - `docs:prot` is **noisy** — it flags studies that merely *declare* a protocol in the IPD statement. Always confirm an actual PDF via per-study `DocumentSection.largeDocumentModule.largeDocs` (field name case-sensitive: `DocumentSection` works; `LargeDocumentModule` alone returns empty).
 - CDN download: `https://cdn.clinicaltrials.gov/large-docs/<last2 of NCT>/<NCT>/<filename>`.
-- ~462 Early Phase 1 with a protocol doc overall; only ~2 microdose-titled with an actual PDF (the two below). Most Phase 0/imaging aren't FDAAA "applicable trials", so PDF upload is voluntary → rare.
+- ~463 Early Phase 1 with a protocol doc overall. **CORRECTION (2026-06-25):** real PDFs are NOT rare — nearly all docs:prot studies carry a real `hasProtocol:true` largeDocs PDF. Only the *microdose-titled* subset was thin (2). The scarce thing is the **archetype**, not the PDF.
+- **`phase:0` is a junk filter** for the archetype — "Early Phase 1" is a CTG grab-bag (453-pt RCTs, vaccines, herbal medicine). Drop it. Search by `query.term` for the archetype signature + `aggFilters=docs:prot,healthy:y`.
+- **Working discriminator for the broad archetype:** PET "receptor occupancy" / radioligand evaluation / "pharmacological challenge" (fMRI/biomarker), healthy or small-n. The generic "single dose" + "pharmacodynamic" set (~134) is mostly conventional SAD/MAD → exclude.
+- **PDF verification:** `filter.ids=` gets stripped by the fetch redirect — use the single-study endpoint `…/api/v2/studies/NCT?fields=NCTId,DesignModule,DocumentSection`. Bulk list pages cap around pageSize≈25 in this fetch tool (larger returns empty).
 
 ## Operational
 

@@ -2,6 +2,21 @@
 
 Log of actions undertaken. Newest first. Append a dated entry at the end of any session that changed state.
 
+## 2026-06-25 (pm) — Job 2: found 6 broad-archetype candidates with real PDFs
+
+- **Scope settled with Dave: BROAD** — single-day experimental-medicine archetype, any readout (not microdose-only).
+- **Corrected a wrong lessons note:** real protocol PDFs are NOT rare in the Early Phase 1 universe. The 463 phase:0+docs:prot studies almost all carry a real `hasProtocol:true` PDF. The scarce thing is the *archetype*, not the PDF. The old "only ~2 with a PDF" finding was an artefact of the over-narrow `microdose` keyword.
+- **`phase:0` is a junk filter for us** — "Early Phase 1" is a grab-bag (453-pt RCTs, vaccines, herbal medicine). Phase tag is unreliable; can't isolate the archetype by phase.
+- **Working discriminator:** PET receptor-occupancy / radioligand-eval / pharmacological-challenge (fMRI/biomarker) studies in healthy or small-n, with a protocol PDF. The generic "single dose PD" set (134 hits) is mostly conventional SAD/MAD → excluded per rules.
+- **6 candidates confirmed (real protocol PDF verified via largeDocs):**
+  - NCT05725005 — ASN51 PET target occupancy, healthy n=12 (Asceneuron). Strong.
+  - NCT03861000 — novel PDE4D PET radioligand eval, n=3 (NIMH). Strong; tracer = microdose, straddles narrow.
+  - NCT03019289 — pridopidine sigma-1/D2 receptor occupancy, healthy+HD n=23 (Prilenia). Strong.
+  - NCT04128683 — dopamine pharmacological-challenge fMRI (placebo/amisulpride/bromocriptine, drug 3h pre-scan), crossover n=31 (UCSD). Strong; cleanest dose-anchored SoA.
+  - NCT03511105 — GSK2798745 segmental LPS alveolar-challenge model, healthy n=47 (GSK). Good mechanistic challenge.
+  - NCT04805983 — BMS-984923 safety/PK + receptor occupancy, n=36 (Yale). Weakest — dose-escalation, SAD-like.
+- **Not done:** onboarding to `protocol_corpus` (needs corpus repo mounted + pipeline run; ground truth outside Cowork). Awaiting Dave's keep/trim call.
+
 ## 2026-06-25 — Job 1 (definition) + report scaffold + project state files
 
 - **Defined the study type and terminology.** Wrote `docs/phase0_definition_and_terms.md` covering definition, microdose thresholds, ICH M3(R2) 5 approaches, FDA eIND, CTG "Early Phase 1", full term list, exclusions. Verified regulatory facts via web.
