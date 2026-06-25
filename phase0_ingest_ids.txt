@@ -1,0 +1,30 @@
+# Phase-0 candidate ingest list — from the ranked union search (2026-06-25).
+# Bare NCT IDs only, one per line (no inline comments — --ids-from and shell
+# splitting both choke on trailing text). Group headers are standalone # lines.
+# Annotations for these IDs live in status.md / the chat thread.
+# Already-in-corpus (excluded): NCT01532024 NCT03861000 NCT02901925 NCT03019289 NCT05725005.
+# Dropped earlier: NCT04805983.
+
+# PET receptor occupancy / radioligand-tracer evaluation
+NCT04202497
+NCT05128058
+NCT06390098
+NCT04394845
+NCT03958630
+NCT02551653
+
+# Pharmacological-challenge imaging (fMRI/PET)
+NCT03512171
+NCT04251221
+NCT04236986
+
+# Challenge-model studies (timing anchored on challenge agent, not drug)
+NCT04057807
+NCT03306589
+NCT04310423
+NCT04204993
+
+# Borderline: 14C microtracer ABA vs therapeutic-dose mass-balance (read to decide)
+NCT04234672
+NCT04965389
+NCT03907540

@@ -2,6 +2,41 @@
 
 Log of actions undertaken. Newest first. Append a dated entry at the end of any session that changed state.
 
+## 2026-06-25 (eve, 4) — Judged the 16; Job 3 characterisation begun
+
+- **Read all 16** (4 from extracted SoA, 12 via subagents). Verdicts: **11 IN, 2 BORDERLINE, 3 OUT** — full table + reasons in `docs/phase0_candidates_judged.md`. Phase-0 set ~triples.
+- **3 OUT** = ¹⁴C ABA/mass-balance + food-effect (conventional clin-pharm, excluded); the read decided them as the metadata-borderline cases predicted. They STAY in corpus, excluded from the Phase-0 subset.
+- **Three Part-3 findings:** (1) SoA splits — half conventional grid, half NO table (narrative "Study Procedures" + scan-timing prose; this is why the finder found nothing); (2) a distinct **challenge-agent** timing anchor (LPS/alcohol/amphetamine/endotoxin/influenza — "3 h post-LPS"); (3) visit/Encounter axis collapses to dose/scan/challenge time.
+- **Two USDM questions to test (Dave's call):** can USDM anchor a timeline on a challenge-agent admin like on study drug; does a narrative-only (no-grid) schedule round-trip into USDM SoA without inventing a table.
+- **Cleanup deferred:** NCT06390098 manual `soa.pdf` carve (grid = "Schedule of Events" Table 1); consider refining the Tier-2 fallback (can mis-target a narrative "Procedures and Assessments" section when the grid is elsewhere — finder-None only, produces empty not wrong).
+
+## 2026-06-25 (eve, 3) — Ingested 16 union candidates; SoA state mapped
+
+- **Ran the ranked union search (Dave, terminal):** 161 union hits; all 5 corpus + dropped NCT04805983 surfaced and ranked sensibly (ranking validated). Quoting fix needed first (unquoted phrases → 11,844 junk; quoted → 161).
+- **Ingested 16 new candidates** (`phase0_ingest_ids.txt`) into corpus: download-pdf + scan + build_ground_truth (vision). All 16 wrote OK.
+- **SoA state of the 16:**
+  - 4 clean SoAs extracted: NCT05128058 (2 tbl/29), NCT04394845 (1/17), NCT03306589 (1/26), NCT04965389 (2/36).
+  - 2 finder MIS-TARGETS (Tier-2 fallback anchored a narrative "Procedures and Assessments" section; real grid elsewhere → vision returned empty): NCT06390098 (grid = "Schedule of Events"/Table 2), NCT03907540 (Quotient microtracer; grid past the narrative). Recoverable via manual soa.pdf.
+  - 10 finder found NO schedule: NCT04202497, NCT03958630, NCT02551653, NCT03512171, NCT04251221, NCT04236986, NCT04057807, NCT04310423, NCT04204993, NCT04234672. Likely genuine no-conventional-grid (archetype thesis) but unconfirmed — needs reading.
+- **Tooling note:** the Tier-2 SoA fallback can mis-target when a narrative "Procedures and Assessments" section exists separately from the grid (gated, finder-None only, produces empty not wrong data). Consider refining later.
+- **Next = Job 3 read:** judge archetype fit + characterise SoA shape (grid / narrative / scan-timing list / none; dose- vs challenge- vs visit-anchored) per protocol.
+
+## 2026-06-25 (eve, 2) — Extended corpus `search` for union candidate-finding
+
+- **Settled the search-filter debate with data.** Pulled live CT.gov counts (docs:prot): current recipe + `healthy:y` = 29; drop `healthy:y` = 73; microdose/sub-therapeutic = 36; "experimental medicine" = 37; endotoxin/LPS challenge = 8; target/PET occupancy = 11; whole Early-Phase-1+PDF universe = 463. Two levers: drop `healthy:y` (patients are in-archetype) and broaden keywords beyond the PET-centric set.
+- **Killed the phase filter.** Checked phases of the 5 kept: only NCT04128683 is EARLY_PHASE1; the other 4 are PHASE1 (one PHASE1+2). Early Phase 1 as a filter would lose 4 of 5. Phase tag fails both ways (noisy + under-inclusive). Use as a supplementary slice only, never the frame.
+- **Layering locked (Dave):** corpus accepts any PDF — no archetype gate; Phase-0 usefulness is a project-layer judgement made by reading the SoA. Metadata = reading-order aid, not exclusion.
+- **Extended `protocol_corpus/scripts/fetch_ctgov_protocols.py` `search`:** multi `--term` union+dedupe, server-side `docs:prot`, triage leaf-fields (phase/n/purpose/model/healthy), `_plausibility` ranking, `--limit` applied AFTER ranking, `--csv` output. Validated offline (parser, trim, scoring, union/dedupe/rank/cap/CSV all pass; archetype +11 vs Phase-3-1053pt −9). Live run is Dave's terminal — recipe in next_steps.
+
+## 2026-06-25 (eve) — Fixed the SoA page-finder for the experimental-medicine archetype
+
+- **Found why 4 of 5 SoAs were empty.** Ground truth for NCT04128683/NCT05725005/NCT03019289/NCT03861000 had `soa: []` with `extractors: []`. Cause traced to `protocol_corpus/scripts/extractors/_pages.py`: the page-finder returned `soa_pages=None` for all four. They don't use a "Schedule of <noun>" caption — the whole project thesis showing up in the data.
+  - NCT04128683 → "Study Procedures Chart" (p6). NCT03019289 → "Table 1: Study Procedures and Assessments" (p59). NCT05725005 → caption-less timing grid (p51-53) under "Procedures and observations"; its only "Schedule of procedures" heading is on the TOC page (correctly filtered). NCT03861000 → **no SoA grid at all** (zero cell-marks); narrative visits + "Table 5: Number of visits".
+- **Fix:** added a gated Tier-2 fallback (`SOA_FALLBACK_PATTERNS`) to `_pages.py`, consulted ONLY when the canonical SoA pass finds nothing. Patterns: Study Procedures Chart; Table/Appendix N: (Study) Procedures and Assessments; Procedures/Assessments by|per Visit; Procedures and observations.
+- **Regression-proof by construction + tested.** Snapshotted finder output for all 222 protocols before/after. Result: 3 changed, all None→pages, **0 existing results altered**. The 3 are exactly NCT04128683 (p6-15), NCT03019289 (p58-67), NCT05725005 (p47-56) — spans cover each real table. NCT03861000 stays None (honest — no table to find).
+- **Rebuild done (Dave, terminal).** `build_ground_truth.py --ids-from` rebuilt the 3. SoA now populated: NCT04128683 = 2 tables (Community + UCSD cohorts, 12/11 activities); NCT05725005 = "Schedule of Procedures", 31 activities/13 cols; NCT03019289 = "Study Procedures and Assessments", 29 activities/7 cols. All via `soa_vision_soa_v4` / claude-sonnet-4-6. Fix validated end-to-end.
+- **NCT03861000 resolved: no SoA.** Reviewed its nearest artefact (Table 5, "Number of visits and time commitment of participants"): a cohort(Phase 1-4) × Visit#1-5 grid, each cell a bundle of discrete activities + an italicised participant time-commitment ("6 hours"). Not an SoA grid (no activity rows, no timing marks). Decision: keep `soa: []` in corpus, document Table 5 in the report as a specimen of visit-axis collapse. The time-commitment column is derivable from activity procedure durations → NOT a USDM delta (see lessons). All 5 SoAs now settled (4 populated, 1 documented-empty). Ready for Job 3.
+
 ## 2026-06-25 (pm) — Job 2: found 6 broad-archetype candidates with real PDFs
 
 - **Scope settled with Dave: BROAD** — single-day experimental-medicine archetype, any readout (not microdose-only).
