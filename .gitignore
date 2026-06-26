@@ -211,15 +211,3 @@ __marimo__/
 
 # Mac
 .DS_Store
-
-# scan outputs (regenerable)
-# analysis_results holds regeneratable scanner/regex outputs (ignored), EXCEPT the
-# LLM footnote classification, which is not bit-reproducible and is tracked.
-analysis_results/*
-!analysis_results/footnote_categories_llm.json
-!analysis_results/footnote_category_counts_llm.md
-!analysis_results/footnote_llm_cache.json
-cross_ref_adaptive.csv
-
-# Docx locks
-docs/~$*.docx
