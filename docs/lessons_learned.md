@@ -76,3 +76,34 @@ https://clinicaltrials.gov/api/v2/studies?query.term=microdose%20OR%20microdosin
 - **NCT02901925** — ABY-029, fluorescence-guided microdose, recurrent glioma (Dartmouth-Hitchcock, n=14).
 - **NCT01532024** — NAP, optical/neutrophil-activation imaging probe, acute lung injury (Univ. Edinburgh, n=15).
 - Both are **imaging** microdose studies, not classic AMS/PK. Ground truth not yet generated (see next_steps / run outside Cowork).
+
+## Pharma Phase 1 / experimental-medicine search & onboarding (2026-06-29)
+
+- **CT.gov v2 API gotchas (cost real time this session):**
+  - There is **no `PHASE0`** value. Phase 0 == `EARLY_PHASE1`. Filter phase with `aggFilters=phase:0|1|2|3|4` (NOT `filter.phases`, which is not a real param).
+  - Sponsor type: `aggFilters=funderType:industry|nih|other|fed`. Posted protocol PDF: `aggFilters=docs:prot`. These compose: `phase:1,funderType:industry,docs:prot`.
+  - `documentSection` is a **top-level sibling of `protocolSection`**, not nested inside it. Reading `protocolSection.documentSection` silently yields nothing (cost a "0 protocols have PDFs" false alarm).
+  - Multi-value `filter.overallStatus` is comma-separated.
+- **Why pharma is near-absent from posted Phase 0/1 protocols:** posting is voluntary (Phase 0/1 are not "applicable clinical trials" under FDAAA), so academia/NIH post and pharma posts the legal minimum (~nothing). Pharma DOES run the studies; they're just labelled Phase 1 and the protocols aren't posted. The doc-bearing set skews academic/NCI by construction.
+- **The 17 pharma Phase 1 set** is corpus enrichment, NOT the Phase-0 archetype (these are conventional clin-pharm: ABA/mass-balance, microtracer, PET occupancy, SAD). Useful as contrast; don't fold into the Phase-0 subset without reading.
+
+## SoA page-finder — more (2026-06-29)
+
+- **pymupdf-missing is a SILENT trap.** `_pages.find_section_pages` guards `if fitz is None: return empty`. With no pymupdf installed, EVERY section returns empty for EVERY protocol, **instantly**, and the SoA extractor then writes `soa: []` with no error — indistinguishable from "vision failed". If a whole batch comes back with empty SoA in ~0.3s/protocol, suspect the dep, not the patterns. (This was the entire cause of the empties in the Cowork sandbox; `pip install --break-system-packages pymupdf` fixes it. On Dave's machine pymupdf is present, so his runs were fine.)
+- **4 SoA caption patterns added to `_pages.py` for the pharma Phase 1 style** (verified hits, no regression):
+  1. broadened `_SOA_KEYWORDS`: optional `(?:study\s+)?` after "schedule of" + singular-tolerant nouns (`assessments?`, `events?`, `procedures?`, …) → catches "Schedule of Study Procedures" (NCT03811834) and singular forms.
+  2. new: `study plan and timing of procedures` (NCT03463525, AstraZeneca).
+  3. new: `study events? flow ?chart` (NCT03311841, Merck).
+- **Two SoA shapes patterns can't reach** (no anchorable heading text): caption-less image grids (NCT03733990 → manual `soa.pdf` via `extract_pdf_pages.py --soa`) and fully **redacted** SoAs (NCT04992442 → see below).
+
+## Redacted / unavailable SoA — convention (2026-06-29)
+
+- **No dedicated field existed; use the `validated` block** (it survives re-extraction; `unvalidated.*` is rewritten every run). Mark the section reviewer-signed-empty with a reason:
+  ```yaml
+  validated:
+    content: { soa: [] }
+    signoff:
+      soa: { by: dih, date: 2026-06-29, note: "SoA redacted in source — ...; intentionally empty; do not create source/soa.pdf." }
+  ```
+- Safe because `soa: []` validates (it's the not-applicable state) and `signoff` has **no strict schema** (consumers only check truthiness + `.keys()`), so the extra `note` key is tolerated. Audits keying off `validated.signoff.soa` see it resolved, not a finder gap.
+- The per-table `has_cci_redactions` flag is for redactions *inside* an otherwise-extracted table — does NOT apply when the whole SoA is redacted (no table objects exist).

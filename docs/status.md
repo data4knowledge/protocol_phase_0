@@ -2,6 +2,15 @@
 
 Log of actions undertaken. Newest first. Append a dated entry at the end of any session that changed state.
 
+## 2026-06-29 — Pharma Phase 1 corpus onboarded; SoA finder patterns + redacted-SoA convention
+
+- **Pivot thread "why no pharma Phase 0 protocols?" — answered.** Not a does-pharma-do-it gap, a protocol-*posting* gap. CT.gov v2 has no `PHASE0`; Phase 0 == `EARLY_PHASE1`. Pharma's early experimental-medicine work is mostly labelled **Phase 1** (or unregistered). Posting a Phase 0/1 protocol PDF is voluntary (not an "applicable clinical trial"), so academia/NIH post; pharma posts ~nothing. → Re-aimed the search at **industry Phase 1 experimental-medicine**.
+- **Rewrote `search.py`** (v2 API done right): `aggFilters=phase:N,funderType:industry,docs:prot` + keyword union, full `nextPageToken` pagination, CSV out. Result: **17 industry Phase 1 experimental-medicine trials WITH posted protocol PDFs** (GSK, AstraZeneca, Takeda, Boehringer, Merck, BMS, Chiesi, Neurocrine). Output: `pharma_phase1_results.csv`.
+- **Onboarded all 17 into `protocol_corpus`** via `fetch_ctgov_protocols.py download-pdf` (13 new + 4 already present), enriched registry sponsor/indication (scoped `--only` loop), built ground truth for the 13 new.
+- **SoA gap on 5/17.** Root cause of the empties in *my* sandbox runs = **pymupdf absent → page-finder returns empty for ALL sections, instantly** (looked like a vision failure; it was not). On a real machine 3 of the 5 were genuine caption gaps → added **4 patterns** to corpus `scripts/extractors/_pages.py` (verified hits, no regression on working protocols). Dave re-ran the build for those 3 (NCT03463525, NCT03811834, NCT03311841) — now resolved.
+- **2 not fixable by patterns:** NCT03733990 (caption-less image grids, SoA p21-32 → manual `soa.pdf` path, build still pending) and **NCT04992442 (SoA redacted — black rectangles, Appendix 1 p70+)** → marked redacted via a `validated` signoff block in its `ground_truth.yaml` (survives re-extraction).
+- **Housekeeping:** moved `status.md`/`next_steps.md`/`lessons_learned.md` into `docs/`; corpus repo .txt scratch + `b4_metrics.json` deleted by Dave (committed).
+
 ## 2026-06-25 (eve, 7) — Both USDM questions closed as non-issues; pattern stated; session paused
 
 - **Both USDM questions are non-issues.** Q1 (challenge anchor) was never a real question — a timeline times events off other events; "study drug" vs "challenge" is a clinical label, not a modelling one. Q2 (narrative round-trip) is no delta — USDM stores activities + times, not a table.

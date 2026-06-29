@@ -2,6 +2,21 @@
 
 The current plan. Single source of truth for "what now". Newest plan on top; rewrite as priorities change.
 
+## Parallel thread (2026-06-29) — pharma Phase 1 experimental-medicine corpus
+
+Separate from the Phase-0 Job-3 work below. Came out of "why no pharma Phase 0 protocols": pharma posts almost no early protocol PDFs, and their experimental-medicine work is labelled Phase 1. Pulled a 17-protocol industry Phase 1 set (posted protocols) into `protocol_corpus` to widen the corpus (NOT the Phase-0 subset).
+
+State: 17 onboarded, registry enriched, ground truth built. SoA resolved on 14; finder patterns added for 3.
+
+Remaining:
+1. **NCT03733990** — SoA is caption-less image grids p21-32. Run (locally): `python3 scripts/extract_pdf_pages.py NCT03733990 --soa 21-32 && python3 scripts/build_ground_truth.py NCT03733990 --apply`.
+2. **NCT04992442** — SoA redacted; DONE (validated signoff marks it intentionally empty; do not create a soa.pdf).
+3. **Temp pids files** in corpus root (`phase1_pids.txt`, `phase1_new_pids.txt`, `soa_fix_pids.txt`) — delete once item 1 is done.
+4. **Decide relationship to the report** — these 17 are pharma Phase 1, NOT the single-day Phase-0 archetype. Keep as corpus enrichment / contrast set, or pull any single-day ones into the Phase-0 subset? Open.
+
+---
+
+
 ## Now — Job 3 (characterise SoAs + USDM delta) + write the report
 
 Protocol set is in hand: the original 5 + 11 new **IN** candidates (verdicts + findings in `docs/phase0_candidates_judged.md`). Search, ingest and judgement are done. What's left:
