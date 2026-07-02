@@ -1,10 +1,14 @@
 ---
 title: Early Phase SoAs — Representation Issues for USDM
 kicker: protocol_phase_0 · report
-footer: Early Phase SoAs · draft
+footer: Early Phase SoAs · v0.1.0
 ---
 
-# Early Phase SoAs — Representation Issues for USDM
+<div class="report-title">
+  <h1>Early Phase SoAs</h1>
+  <p class="subtitle">Early-phase Schedules of Activities, and the representation issues they raise for USDM.</p>
+  <p class="docmeta">Version: 0.1.0 · 2nd July 2026</p>
+</div>
 
 ## Summary
 

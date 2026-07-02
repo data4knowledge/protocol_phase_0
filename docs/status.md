@@ -2,6 +2,11 @@
 
 Log of actions undertaken. Newest first. Append a dated entry at the end of any session that changed state.
 
+## 2026-07-02 (later 6) — Added VERSION 0.1.0; report stamped and rebuilt
+
+- **New `VERSION` file = `0.1.0`** at repo root.
+- **Report stamped `v0.1.0`** (front-matter footer + "Version 0.1.0" under the title) and rebuilt `early_phase_soas.html`. Dave to tag the repo `v0.1.0`.
+
 ## 2026-07-02 (later 5) — GT built for the two microdose protocols; root scratch files deleted
 
 - **Ground truth built (Dave ran) for NCT02901925 and NCT01532024** — both wrote OK but **no SoA extracted** (`soa: None`); flagged in `project_protocols.md` (genuine no-grid vs page-finder miss, revisit). All 26 chosen now have GT.
