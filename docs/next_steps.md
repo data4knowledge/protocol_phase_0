@@ -2,6 +2,33 @@
 
 The current plan. Single source of truth for "what now". Newest plan on top; rewrite as priorities change.
 
+## NOW (2026-07-02) — map the EMP SoA-representation patterns to the atlas + USDM
+
+Scope reframed by Dave (2026-07-02): this is the SAME Phase-0 piece, initially loosely specified. The deliverable is the **USDM delta for these concrete SoA-representation patterns** — NOT the single-day-archetype boundary. The prior "no USDM delta" conclusion was on too narrow a framing and is effectively reopened.
+
+**Test set = the four in `sources/protocols.docx`, all already onboarded in `protocol_corpus`:**
+NCT05469126 (=J2A-MC-GZGM, the EMP Example 2), NCT05176314, NCT06085482, NCT05444556.
+Source docs: `sources/EMP Study.docx` (problem statement + SoA screenshots), `sources/protocols.docx` (the four IDs).
+
+**Consolidated issue inventory — CONFIRM COMPLETE with Dave first (he may have a 6th):**
+1. **Interval/window activities crossing day boundaries** — 24h urine in 8h bins (sometimes 4h): `0–8h, 8–16h, 16–24h`, cells merged across study-day columns. Activity with a duration (start→end), not a point.
+2. **Dose-relative timing, extended-hour notation** — `24, 36, 48, 72, 96, 120, 168, 240h` rel. to dose as running hours, not day+clock. Extractor currently dumps these into free-text `conditions`.
+3. **Predose "P" as a per-cell relative marker** — reusable "before the dose in this period" anchor.
+4. **Footnote-encoded scheduling semantics** — windows (±1.5h), triplicate/repeat counts, conditional repeats ("if ISRs persist, repeat daily until resolution"), procedure ordering. Timing lives in the footnote, not the cell.
+5. **Parallel timelines starting pre-dose** — continuous 24h monitoring of X that begins before dose and runs across it: a sub-timeline alongside the main dose-anchored timeline. (This is the general issue Dave named; relates to the already-logged continuous-monitoring case but the NEW angle is the pre-dose start.)
+
+**Then, per pattern:**
+a. Map to the 12-pattern atlas in `protocol_soa_patterns` (existing pattern / partial / absent). → **mount `protocol_soa_patterns` first.**
+b. Assess USDM representability — TRACE against DDF-RA (API + CT + CORE rules), do not assert. Flag guesses. (Behaviour rule + no-unjustified-USDM-claims memory.)
+c. Ground each claim in the actual protocol PDFs / ground truth, not the one-line summaries (that has burned me twice).
+
+**Then write it up** into `docs/report/phase0_soa.md` and rebuild (`python3 report_theme/build.py docs/report/phase0_soa.md`). Only the delta — don't rebuild the general atlas.
+
+Mounts needed next session: `protocol_soa_patterns` (atlas), `DDF-RA` (USDM tracing). Corpus + phase_0 already mount cleanly.
+
+---
+
+
 ## Parallel thread (2026-06-29) — pharma Phase 1 experimental-medicine corpus
 
 Separate from the Phase-0 Job-3 work below. Came out of "why no pharma Phase 0 protocols": pharma posts almost no early protocol PDFs, and their experimental-medicine work is labelled Phase 1. Pulled a 17-protocol industry Phase 1 set (posted protocols) into `protocol_corpus` to widen the corpus (NOT the Phase-0 subset).
