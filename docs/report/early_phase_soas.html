@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Early Phase SoAs — Representation Issues for USDM</title>
+<style>
+/* ============================================================
+   d4k report theme
+   Canonical stylesheet for markdown-driven HTML reports.
+   Edit here; run sync_into.py to push to consuming repos.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+:root{
+  /* --- d4k brand (exact, per D4K Brand Guide) --- */
+  --navy:#122140;          /* primary: headings, header band, table head (RGB 18 33 64) */
+  --navy-700:#243a66;      /* lighter navy for links (derived) */
+  --amber:#F5B200;         /* accent: rules, the "4", blockquote edge (RGB 245 178 0) */
+  --amber-soft:#fdf3d4;    /* amber wash for callouts/quotes (derived tint) */
+  /* --- neutrals --- */
+  --ink:#1f2a37;
+  --muted:#5c6b7e;
+  --line:#e3e8ef;
+  --bg-soft:#f4f4f4;       /* brand light grey (RGB 246 246 246 / #f4f4f4) */
+  /* --- type: IBM Plex (web font) for reports. Sans heads, serif body,
+         mono code — lining figures, coordinated faces. Brand slide fonts
+         (Bai Jamjuree / Barlow) stay on slides. --- */
+  --font-head:'IBM Plex Sans','Helvetica Neue','Segoe UI',system-ui,Arial,sans-serif;
+  --font-body:'IBM Plex Serif',Georgia,Cambria,serif;
+  --font-mono:'IBM Plex Mono','SF Mono',Consolas,Menlo,monospace;
+}
+
+*{box-sizing:border-box;}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+body{
+  font-family:var(--font-body);
+  color:var(--ink);
+  line-height:1.55;
+  margin:0;
+  font-size:15px;
+  background:#fff;
+}
+
+/* ---- brand header band ---- */
+.d4k-band{background:var(--navy);color:#fff;}
+.d4k-band-inner{
+  max-width:820px;margin:0 auto;padding:14px 28px;
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+}
+.d4k-wordmark{
+  font-family:var(--font-head);font-weight:700;
+  font-size:20px;letter-spacing:-.01em;color:#fff;white-space:nowrap;
+}
+.d4k-wordmark .four{color:var(--amber);}
+.d4k-kicker{
+  font-family:var(--font-body);font-size:10.5px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:#aebbd2;text-align:right;
+}
+
+/* ---- content ---- */
+main{max-width:820px;margin:0 auto;padding:6px 28px 40px;}
+h1,h2,h3,h4{font-family:var(--font-head);color:var(--navy);line-height:1.22;}
+h1{font-size:26px;margin:26px 0 4px;padding-bottom:11px;border-bottom:3px solid var(--amber);}
+h2{font-size:19px;margin-top:32px;padding-bottom:5px;border-bottom:1px solid var(--line);}
+h3{font-size:15.5px;margin-top:22px;}
+h4{font-size:14px;margin-top:18px;color:var(--muted);}
+
+/* ---- report title block (centered title page) ---- */
+.report-title{text-align:center;margin:34px 0 14px;}
+.report-title h1{font-size:38px;border-bottom:none;padding-bottom:0;margin:0 0 14px;}
+.report-title .subtitle{font-size:20px;color:var(--muted);font-style:italic;margin:0 0 10px;line-height:1.3;}
+.report-title .docmeta{font-size:14px;color:var(--muted);font-style:italic;margin:0;}
+p,li{font-size:15px;}
+em{color:var(--muted);}
+a{color:var(--navy-700);}
+strong{color:var(--navy);}
+code{font-family:var(--font-mono);font-size:12px;background:var(--bg-soft);padding:1px 5px;border-radius:4px;color:var(--navy);}
+pre{background:var(--bg-soft);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow:auto;font-size:12px;}
+pre code{background:none;padding:0;color:var(--ink);}
+
+blockquote{
+  color:var(--ink);border-left:3px solid var(--amber);background:var(--amber-soft);
+  margin:16px 0;padding:10px 16px;font-size:13.8px;border-radius:0 5px 5px 0;
+}
+blockquote p{font-size:13.8px;margin:6px 0;}
+
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:12.8px;font-family:var(--font-body);}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top;}
+thead th{background:var(--navy);color:#fff;font-weight:700;border-color:var(--navy);}
+tbody tr:nth-child(even) td{background:var(--bg-soft);}
+/* highlighted column (e.g. a dosing day): th.hl / td.hl */
+th.hl{background:#33508a;}                 /* navy tint, stays legible white-on-navy */
+td.hl{background:var(--amber-soft);}
+
+/* inline prevalence figure after a card heading: <span class="prev">34%</span> */
+.prev{font-family:var(--font-body);font-weight:400;font-size:.62em;color:var(--muted);vertical-align:middle;margin-left:.5em;}
+
+/* pattern-atlas cards: a 2-up grid of boxed cards (not one section per pattern) */
+.card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin:20px 0;}
+.card{border:1px solid var(--line);border-radius:8px;padding:14px 16px 12px;page-break-inside:avoid;}
+.card .card-head{font-family:var(--font-head);font-size:16px;color:var(--navy);margin:0 0 6px;padding:0;border:0;line-height:1.3;}
+.card .card-head .slug{font-family:var(--font-mono);font-size:.9em;font-weight:600;background:#e9eef5;color:var(--navy);padding:2px 8px;border-radius:5px;margin-right:.35em;}
+.card .card-head .prev{font-size:.62em;}
+.card p,.card li{font-size:13px;}
+.card > p:first-of-type{margin-top:2px;}
+.card table{font-size:11px;margin:10px 0;}
+.card th,.card td{padding:5px 7px;}
+.card strong{color:var(--navy);}
+@media(max-width:640px){.card-grid{grid-template-columns:1fr;}}
+@media print{.card-grid{gap:10px;}}
+
+hr{border:0;border-top:1px solid var(--line);margin:26px 0;}
+
+/* ---- figures (inline SVG diagrams, like the existing reports) ---- */
+figure{margin:22px 0;text-align:center;page-break-inside:avoid;}
+figure svg,figure img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;}
+figcaption{font-family:var(--font-body);font-size:11.5px;color:var(--muted);margin-top:6px;}
+
+/* ---- optional callout box: use a blockquote starting with **Note:** etc, or raw html ---- */
+.callout{
+  background:var(--bg-soft);border:1px solid var(--line);border-top:3px solid var(--navy);
+  border-radius:6px;padding:12px 16px;margin:18px 0;
+  font-family:var(--font-body);font-size:13px;
+}
+.callout .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-bottom:4px;}
+
+/* ---- footer ---- */
+.d4k-foot{
+  border-top:1px solid var(--line);max-width:820px;margin:30px auto 0;padding:14px 28px 26px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  font-family:var(--font-body);font-size:11px;color:var(--muted);
+}
+.d4k-foot .mark{font-weight:800;font-size:15px;color:var(--navy);letter-spacing:-.02em;}
+.d4k-foot .mark .four{color:var(--amber);}
+
+@media print{
+  .d4k-band-inner,main,.d4k-foot{max-width:none;}
+  body{font-size:11.5pt;}
+  h1{font-size:19pt;} h2{font-size:14pt;page-break-after:avoid;} h3{font-size:12pt;page-break-after:avoid;}
+  .report-title h1{font-size:26pt;} .report-title .subtitle{font-size:14pt;} .report-title .docmeta{font-size:10pt;}
+  p,li{font-size:11pt;} table{font-size:9.5pt;} blockquote p{font-size:10.5pt;}
+  table,blockquote,.callout,figure{page-break-inside:avoid;}
+  a{color:var(--ink);text-decoration:none;}
+}
+@page{margin:16mm;size:A4;}
+
+</style>
+</head>
+<body>
+
+<div class="d4k-band">
+  <div class="d4k-band-inner">
+    <span class="d4k-wordmark">data<span class="four">4</span>knowledge</span>
+    <span class="d4k-kicker">protocol_phase_0 · report</span>
+  </div>
+</div>
+
+<main>
+<h1 id="early-phase-soas-representation-issues-for-usdm">Early Phase SoAs — Representation Issues for USDM</h1>
+<h2 id="summary">Summary</h2>
+<p>Early-phase / experimental-medicine studies — short, small-population, intensively-sampled,
+dosing-anchored trials — produce Schedules of Activities (SoAs) whose <em>cells</em> carry timing
+structure that a plain activity×timepoint grid cannot hold. This report catalogues those
+concrete representation issues and asks, for each, whether the CDISC Unified Study
+Definitions Model (USDM) can carry it.</p>
+<p>It is a companion to the general <a href="../../../protocol_soa_patterns/docs/reports/soa_patterns.html">SoA and Footnote Patterns report</a>,
+which catalogued twelve SoA patterns and twenty-one footnote categories across 169 protocols
+and showed USDM carries them all. That scan is <strong>thin on exactly this population</strong>, so this
+report works the delta: the cell-level demands these early-phase tables make, evidenced by a
+set of real protocols and, most directly, by the SoA screenshots in <code>sources/EMP Study.docx</code>.</p>
+<p>The report has three parts: Part 1 fixes the study type and terminology (see the companion
+note <code>docs/phase0_definition_and_terms.md</code>); Part 2 is the protocol set; Part 3 is the
+issue-by-issue characterisation and USDM assessment.</p>
+<blockquote>
+<p><strong>Status: draft.</strong> The five issues are characterised and grounded (Part 3). The USDM verdicts
+are marked either <strong>traced</strong> (settled against DDF-RA in prior work, cited) or <strong>open</strong>
+(needs a DDF-RA trace — the current next step). No USDM capability is asserted without a trace.</p>
+</blockquote>
+<h2 id="part-1-what-these-studies-are">Part 1 · What these studies are</h2>
+<p>A <strong>Phase 0 / exploratory study</strong> gives a sub-therapeutic exposure under a reduced preclinical
+package to gather early PK, PD, mechanistic or imaging data — not safety/efficacy, not
+therapeutic benefit. In practice the set used here is broader: <strong>early-phase experimental
+medicine</strong>, which includes conventional Phase 1 clin-pharm PK/DDI studies. Those turn out to
+be where the SoA representation issues are sharpest.</p>
+<p>ClinicalTrials.gov has no "Phase 0" value — these register as <strong>Early Phase 1</strong>, and much
+pharma early-phase work is simply labelled Phase 1. Full definition, thresholds and
+terminology: <code>docs/phase0_definition_and_terms.md</code>.</p>
+<h2 id="part-2-the-protocol-set">Part 2 · The protocol set</h2>
+<p>The corpus for the analysis is <strong>26 protocols</strong> sourced from ClinicalTrials.gov (real posted
+protocol documents only). The full chosen/rejected list, with sponsor, indication, SoA form
+and timing anchor, is <code>docs/project_protocols.md</code>. In shape it splits into:</p>
+<ul>
+<li><strong>Clin-pharm PK / DDI (Eli Lilly / Loxo)</strong> — the four EMP protocols below; conventional
+  crossover PK and drug-drug-interaction designs whose SoAs carry the cell-level structure
+  this report is about.</li>
+<li><strong>PET receptor-occupancy / radioligand-tracer</strong> studies (e.g. Asceneuron, Pfizer, Takeda,
+  Genentech, GSK) — dose/scan-anchored, some microdose tracer.</li>
+<li><strong>Pharmacological- and infection-challenge</strong> studies (LPS, endotoxin, alcohol, amphetamine,
+  influenza) — assessments timed relative to a challenge administration.</li>
+<li><strong>Imaging microdose</strong> studies (fluorescence / optical probes).</li>
+</ul>
+<p>The four EMP protocols are the primary evidence set (from <code>sources/protocols.docx</code>), all Eli
+Lilly / Loxo Phase 1 healthy-volunteer PK/DDI:</p>
+<table>
+<thead>
+<tr>
+<th>NCT</th>
+<th>Study</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NCT05469126</td>
+<td>J2A-MC-GZGM</td>
+<td>clarithromycin + LY3502970 DDI — <strong>the source of the SoA screenshots</strong> ("Example 2")</td>
+</tr>
+<tr>
+<td>NCT05176314</td>
+<td>—</td>
+<td>pirtobrutinib + rosuvastatin DDI</td>
+</tr>
+<tr>
+<td>NCT06085482</td>
+<td>—</td>
+<td>LY3502970 Phase 1</td>
+</tr>
+<tr>
+<td>NCT05444556</td>
+<td>—</td>
+<td>imlunestrant, female healthy participants (crossover)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="part-3-soa-representation-issues-and-usdm-impact">Part 3 · SoA representation issues and USDM impact</h2>
+<p>Each issue below is grounded in the GZGM (NCT05469126) SoA and the other EMP screenshots.
+"USDM status" is <strong>traced</strong> (settled, cited) or <strong>open</strong> (needs a DDF-RA trace).</p>
+<h3 id="issue-1-interval-duration-activities-that-cross-day-boundaries">Issue 1 — Interval / duration activities that cross day boundaries</h3>
+<p><strong>What the SoA shows.</strong> A 24-hour urine collection recorded in 8-hour bins (4-hour in some
+studies), the bins running across the study-day columns and merged to show it:</p>
+<blockquote>
+<p><code>-24 to -16h, -16 to -8h, -8 to 0h, 0 to 8h, 8 to 16h, 16 to 24h</code> … <code>48 to 56h, 56 to 64h, 64 to 72h</code></p>
+</blockquote>
+<p><strong>What it demands.</strong> Each bin is an activity with an explicit <strong>start and end</strong> — a duration,
+not a point. A single logical activity spans several day columns, and the interval can
+<strong>begin before dosing</strong> (<code>-24 to -16h</code>).</p>
+<p><strong>USDM status: OPEN.</strong> USDM timing is expressed primarily as point references (a Timing
+relative to a reference event, with a window tolerance). Whether a collection <em>interval</em>
+(start→end as the activity's own extent, distinct from a ± scheduling window) has a first-class
+representation — or must be modelled as two bounding timings, or an activity duration — needs
+tracing against the DDF-RA API and CORE rules. <em>This is the most likely genuine delta; do not
+assert until traced.</em></p>
+<h3 id="issue-2-dose-relative-timing-in-extended-hour-notation">Issue 2 — Dose-relative timing in extended-hour notation</h3>
+<p><strong>What the SoA shows.</strong> PK sampling timed in running hours relative to the dose, past 24:</p>
+<blockquote>
+<p><code>P, 0.5, 1, 2, 4, 6, 8, 12, 16</code> then <code>24 (D2), 36 (D2), 48 (D3) … 120 (D26), 168 (D28), 240 (D31)</code> — <em>"Times are relative to LY dosing"</em></p>
+</blockquote>
+<p>Dave's note asks the tool to accept <code>24:00 hr, 36:00 hr, 48:00 hr …</code> — hours that keep
+counting rather than resetting to a day+clock.</p>
+<p><strong>What it demands.</strong> The primary coordinate is the <strong>elapsed time from dosing</strong>; the "(D2)…
+(D31)" is the calendar day the offset happens to land on — a rendering, not the stored value.</p>
+<p><strong>USDM status: traced — handled.</strong> A discrete action timed off dosing is a scheduled activity
+instance with a relative timing offset (see <code>lessons_learned.md</code>). The offset is an ISO 8601
+duration (<code>PT24H</code>, <code>PT240H</code>), so extended hours are just a larger duration; day-in-parentheses
+is a display convention over the same stored offset. The open part is presentational (can the
+authoring tool <em>enter/show</em> <code>240:00 hr</code>), not a model gap.</p>
+<h3 id="issue-3-p-a-predose-anchor-in-individual-cells">Issue 3 — "P": a predose anchor in individual cells</h3>
+<p><strong>What the SoA shows.</strong> A literal <code>P</code> inside cells, per procedure, per period — <code>P</code> for the
+Day-1 Medical Assessment and ECG, <code>P, 0.5, 1, 2 …</code> heading a PK series, <code>P (24 hr)</code> for a
+coproporphyrin draw — re-anchoring in Period 2 of the crossover.</p>
+<p><strong>What it demands.</strong> A reusable relative anchor meaning "immediately before the dose in <em>this</em>
+period", resolving to the correct dose administration in each period.</p>
+<p><strong>USDM status: traced — handled (one point to confirm).</strong> "Predose" is a Timing of type
+<em>Before</em> relative to the dose administration; relative-timing anchors are the settled case.
+The one thing worth confirming in the trace: in a multi-period crossover, that each period's
+<code>P</code> references that period's dose-administration instance rather than a single global anchor.</p>
+<h3 id="issue-4-footnote-encoded-scheduling-semantics">Issue 4 — Footnote-encoded scheduling semantics</h3>
+<p><strong>What the SoA shows.</strong> Dave's note: <em>"Heavy usage of footnotes."</em> The cell shows only <code>Xᵇ</code>
+or <code>Xᶜ</code>; the rule is in the footnote:</p>
+<ul>
+<li><strong>Windows</strong> — <em>"within ± 1.5 hours of the scheduled time."</em></li>
+<li><strong>Triplicate + borrowed timing</strong> — <em>"measured in triplicate at predose and 12h, 24h, 48h, 72h and 96h to match PK collection timing"</em> (cell shows <code>Xᶜ</code>).</li>
+<li><strong>Conditional repeats</strong> — injection-site assessment <em>"repeated daily until resolution"</em>; <em>"Failure to administer … will not result in a protocol deviation."</em></li>
+<li><strong>Ordering</strong> — <em>"If multiple procedures take place at the same time point, the order should be: ECG, vital signs, blood samples."</em></li>
+</ul>
+<p><strong>What it demands.</strong> Timing, repetition count, conditionality and ordering — carried as prose,
+not as a cell mark.</p>
+<p><strong>USDM status: mixed.</strong></p>
+<ul>
+<li><em>Windows</em> — <strong>traced/handled</strong>: timing-window tolerance is an existing primitive.</li>
+<li><em>Triplicate / repeat counts</em> — <strong>open</strong>: whether a repeat count attaches to one activity or
+  expands to N instances needs tracing.</li>
+<li><em>Conditional repeats ("until resolution")</em> — <strong>open</strong>: needs decision/condition + exit-condition
+  logic; trace required.</li>
+<li><em>Co-timed ordering</em> — <strong>open</strong>: ordering <em>among activities sharing a timepoint</em> is subtler than
+  the per-instance timeline ordering already known; trace required.</li>
+</ul>
+<h3 id="issue-5-parallel-timelines-that-start-before-the-dose">Issue 5 — Parallel timelines that start before the dose</h3>
+<p><strong>What the SoA shows.</strong> A sampling series running as its own timeline, beginning the day before
+dosing and continuing across it — coproporphyrin <code>0, 0.5, 1, 2, 4, 6, 8, 12, 16 hr</code> on Day -1,
+then <code>P (24 hr)</code> on Day 1 — plus the pre-dose urine bins from Issue 1.</p>
+<p><strong>What it demands.</strong> A <strong>second timeline alongside</strong> the main dose-anchored one, whose zero is
+not the dose and which spans the dosing moment.</p>
+<p><strong>USDM status: traced — likely handled (confirm).</strong> Parallel / continuous monitoring is the
+settled cyclic-sub-timeline-with-exit case (<code>lessons_learned.md</code>); a sub-timeline can anchor on
+any reference event, so a pre-dose-anchored series that spans the dose should follow the same
+shape. The new angle to confirm in the trace is only that the anchor precedes the main
+timeline's anchor — probably fine, not asserted.</p>
+<h3 id="where-this-leaves-usdm">Where this leaves USDM</h3>
+<p>Of the five, <strong>two map onto already-traced relative-timing primitives</strong> (Issues 2 and 3) and
+<strong>one onto the known sub-timeline pattern</strong> (Issue 5). The genuine open questions — the
+candidate deltas — are <strong>Issue 1 (interval/duration activities with explicit start→end spanning
+columns)</strong> and <strong>parts of Issue 4 (repeat counts, conditional "until resolution" repeats,
+co-timed ordering)</strong>. These are the items to trace against DDF-RA (API + CT + CORE rules) before
+any verdict. This reopens, on firmer ground, the earlier "no USDM delta" conclusion, which was
+reached on a narrower framing (challenge anchor + narrative round-trip only).</p>
+<h2 id="references">References</h2>
+<ul>
+<li>Companion report: <code>protocol_soa_patterns/docs/reports/soa_patterns.html</code> — SoA and Footnote Patterns.</li>
+<li>Study type, definition, terminology and the issue catalogue: <code>docs/phase0_definition_and_terms.md</code>.</li>
+<li>Protocol set (chosen / rejected): <code>docs/project_protocols.md</code>.</li>
+<li>Evidence: <code>sources/EMP Study.docx</code> (notes + SoA screenshots, incl. NCT05469126 / J2A-MC-GZGM).</li>
+<li>Prior USDM tracing and SoA-shape findings: <code>docs/lessons_learned.md</code>.</li>
+<li>ICH M3(R2); FDA Exploratory IND Guidance (2006); EMA M3(R2).</li>
+</ul>
+</main>
+
+<div class="d4k-foot">
+  <span><span class="mark">d<span class="four">4</span>k</span>&nbsp;&nbsp;data4knowledge</span>
+  <span>Early Phase SoAs · draft · 2026-07-02</span>
+</div>
+
+</body>
+</html>

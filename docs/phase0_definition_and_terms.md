@@ -1,160 +1,132 @@
-# Phase 0 / Microdose Protocols — Definition & Terminology
+# Early Phase SoAs — the Issue, Definition & Terminology
 
-Job 1 of the Phase 0 corpus work. Purpose: pin down what we mean by "these protocols" so the CTG search (job 2) and SoA characterisation (job 3) hunt for the right thing.
+What this project is now about, in one line: **the concrete Schedule-of-Activities (SoA)
+representation problems that early-phase / experimental-medicine studies put on USDM** —
+the complex cells, the merged cells, the sub-day dose-relative timing, the "P" predose
+anchors, and the semantics buried in footnotes.
 
-## Project purpose (locked 2026-06-25)
+The study-type definition and terminology (microdose, Phase 0, Early Phase 1, etc.) is
+still here as background, further down. But the driving question is no longer "what counts
+as Phase 0" — it's "can USDM's SoA carry what these tables actually contain."
 
-Take **one specific, under-represented trial type — single-day "experimental medicine" / Phase 0 studies** — find enough real examples (the general corpus and the `protocol_soa_patterns` 169-protocol scan are **thin on exactly this population**), and identify the **specific issues their SoAs raise for USDM**, relative to the existing 12-pattern atlas. Job 2 (pull more from ct.gov) is needed precisely because these are under-represented today.
+## The issue at hand
 
-## What we're actually after (the real spec)
+The evidence is `sources/EMP Study.docx` (Dave's notes + real SoA screenshots, the clearest
+being **J2A-MC-GZGM / NCT05469126**, the clarithromycin + LY3502970 DDI study). These SoAs
+are not exotic science — they are ordinary clin-pharm PK/DDI tables — but the *cells* carry
+timing structure that a naive activity×timepoint grid can't hold. Five patterns:
 
-The driving interest is **assessing impact on the USDM Schedule of Activities (SoA)** — what this class of protocol *requires* of the SoA model. So the operative definition is about **SoA shape**, not drug chemistry. The microdose/PK material below is a useful subset, not the boundary.
+### 1. Interval / duration activities that cross day boundaries
 
-The target archetype, **as actually described by Dave** (spec is deliberately loose):
+A "24-hour urine collection" is not a point in time; it's a collection **over an interval**,
+recorded in bins. In GZGM these bins are 8-hour (4-hour in some studies) and they run
+straight across the study-day columns:
 
-- **"Phase 0" / "early phase" / "experimental medicine"** studies.
-- Often run on a **single day** (or very short).
-- **Small population.**
-- **"Lot of studies done"** — i.e. many such trials are run.
-- Referred to as **"EMP"** — meaning unconfirmed. Best guess "Experimental Medicine Protocol" (the field is "Experimental Medicine / EM"); could be sponsor-specific. **TO CONFIRM.**
-- Aim: assess **impact on USDM SoAs** and any particular requirements.
+> `-24 to -16h, -16 to -8h, -8 to 0h, 0 to 8h, 8 to 16h, 16 to 24h` … then `48 to 56h, 56 to 64h, 64 to 72h`
 
-**Hypotheses (mine, NOT Dave's spec — to test in job 3, not selection criteria):**
+Each bin is an activity with a **start and an end**, not a mark against a single timepoint.
+The table merges cells across day columns to show it. Note two things: the interval can
+**begin before dosing** (the `-24 to -16h` bins), and a single logical activity spans
+several columns.
 
-- These have **dense, sub-day SoAs** (many procedures, fine timing in minutes/hours, tight repeats, single encounter). This is my prior from how single-day early-phase PK studies usually look — unverified, and won't hold for all of them.
-- The single-day / sub-day timing is the part most likely to stress the USDM SoA model.
+### 2. Dose-relative timing in extended-hour notation
 
-Job 3 is where we confirm or kill these against real protocols.
+PK sampling is timed in **running hours relative to the dose**, well past 24:
 
-## Prior art: protocol_soa_patterns report (READ THIS FIRST for job 3)
+> `P, 0.5, 1, 2, 4, 6, 8, 12, 16` then `24 (D2), 36 (D2), 48 (D3), 72 (D4), 96 (D5)` … `120 (D26), 168 (D28), 240 (D31)` — *"Times are relative to LY dosing"*
 
-Reference: `protocol_soa_patterns/docs/reports/soa_patterns.html` (Dave, 2026-06-25). Much of "characterise SoAs + USDM impact" is **already done** here:
+The clock notation Dave calls out explicitly: it must accept `24:00 hr, 36:00 hr, 48:00 hr,
+72:00 hr …` — i.e. hours that keep counting rather than resetting to a day+clock time. The
+"(D2)"/"(D31)" in parentheses is the calendar day the running hour happens to fall on; the
+**primary** coordinate is the elapsed hour from dosing, not the study day the column implies.
 
-- Scan of **169 protocols with SoAs** + **1,759 footnotes** (147 protocols). Same corpus ecosystem.
-- Catalogues **12 SoA patterns** and **21 footnote categories**, mapped to **11 USDM primitives**. Thesis (demonstrated): **USDM already carries every pattern.** Only **2 soft enhancement candidates** — `state_preparation` (e.g. fasting) and `activity_variant` — both workable today, neither blocking.
-- Relevant to our archetype:
-  - **`pk_profile` — dense PK sampling, 68%** = my "dense SoA" hypothesis, but properly measured. Hour/minute-resolution sampling round a dosing event. USDM: **sub-timeline anchored on the dose** (primitives B Sub-timeline at Activity, C Sub-timeline at SAI, G Timing windows).
-  - **Asynchronous timelines (D)** + **Cycles as decision-loop (F)** = the periodic/continuous-monitoring case (DIH correction above). Confirmed handled.
+### 3. "P" — a predose anchor in individual cells
 
-**Implication for this project:** don't re-characterise the general SoA→USDM mapping — it exists. The genuine open Phase-0 question is narrower: do **single-day / no-visit "experimental medicine"** protocols introduce or stress any pattern **beyond these 12**, or is the "visit doesn't apply" case already absorbed by the Encounter-modality (H) / main-timeline (A) primitives? Job 3 = test that delta, not rebuild the atlas.
+A literal `P` (predose) appears **inside cells**, per procedure, per period: `P` for the
+Day-1 Medical Assessment and ECG, `P, 0.5, 1, 2 …` heading a PK series, `P (24 hr)` for a
+coproporphyrin draw. It's a reusable relative anchor meaning "immediately before the dose in
+*this* period" — and in a two-period crossover it re-anchors in Period 2. Dave's note:
+*"need a 'P' for predose option for each cell."*
 
-## USDM SoA characterisation targets (from Dave's domain knowledge)
+### 4. Footnote-encoded scheduling semantics
 
-These are the SoA features that matter for USDM impact — the "particular requirements" to assess in job 3. From Dave, 2026-06-25:
+Dave's note: *"Heavy usage of footnotes."* The cell often carries only `Xᵇ` or `Xᶜ`; the
+actual timing rule lives in the footnote. Observed in the screenshots:
 
-1. **Discrete timed actions** — point-in-time activities (1hr, 2hr, …), timed off a reference (typically dosing). *USDM read (tentative): handled cleanly — each is a scheduled activity instance with a relative timing offset.*
+- **Windows:** *"Day -1 vitals should be performed within ± 1.5 hours of the scheduled time."*
+- **Triplicate + borrowed timing:** *"Supine BP and pulse rate … measured in triplicate at predose and 12h, 24h, 48h, 72h and 96h to match PK collection timing"* — the cell shows `Xᶜ`; the count and the times are in the note.
+- **Conditional repeats:** injection-site assessment *"repeated daily until resolution"*, plus *"Failure to administer … will not result in a protocol deviation."*
+- **Procedure ordering:** *"If multiple procedures take place at the same time point, the following order should be used: ECG, vital signs, blood samples."*
 
-2. **Parallel / continuous monitoring** — an activity running *across* a span, not at a point: "measure X every N minutes", continuous ECG/telemetry, etc. In the SoA table this shows as **merged horizontal cells spanning the time columns, usually with a footnote**. *USDM representation (per Dave): a **separate timeline** that cycles the activity, with an **exit condition** firing when the elapsed time is reached. So it's one timeline reference from the main SoA, looping to a time-based exit — not exploded point instances. Continuous telemetry is the same shape with the cycle = sampling interval. USDM handles this; not a gap.*
+None of that is representable by a tick in a cell; it is timing, repetition, conditionality
+and ordering expressed as prose attached to the cell.
 
-3. **The traditional "visit" doesn't apply** — no sequence of Encounters; one encounter (or a continuous stay), everything timed relative to dosing rather than visit days. *USDM read (tentative, confirm with Dave): the Encounter axis that normally structures an SoA largely collapses; the organising axis becomes relative time, not visit.*
+### 5. Parallel timelines that start before the dose
 
-For job 3: characterise how each protocol's SoA actually uses these patterns, and check the USDM representations hold up against the real documents rather than asserting. Note (DIH correction, 2026-06-25): do **not** claim USDM gaps without tracing the model — the cyclic-sub-timeline-with-exit handles periodic/continuous monitoring.
+Some sampling runs as its own series **beginning the day before dosing** and continuing
+across it — coproporphyrin sampled `0, 0.5, 1, 2, 4, 6, 8, 12, 16 hr` on Day -1, then
+`P (24 hr)` on Day 1. Combined with the pre-dose urine bins (#1), the SoA has a **second
+timeline alongside the main dose-anchored one, whose zero is not the dose** and which spans
+the dosing moment. (This is the pre-dose-start angle of the already-known continuous /
+parallel-monitoring case — see `lessons_learned.md`.)
 
-## Working definition (microdose sub-class)
+### Why these are the target
 
-A **Phase 0 / exploratory study** is a first-in-human trial that gives a *sub-therapeutic* exposure of a drug under a reduced preclinical package, purely to gather early PK, PD, mechanistic or imaging data — **not** to assess safety/tolerability or efficacy, and **not** intended to produce therapeutic benefit. The defining feature is the dose: low enough that the risk is negligible, so it sits *before* a conventional Phase 1.
-
-The tightest sub-class is the **microdose study**.
-
-## The numbers (microdose thresholds)
-
-A dose is a **microdose** if it is below *all* of:
-
-- **≤ 100 µg total** (and, in the repeat version, ≤ 100 µg per administration, ≤ 5 administrations, ≤ 500 µg total), AND
-- **≤ 1/100th of the NOAEL** (No Observed Adverse Effect Level), AND
-- **≤ 1/100th of the pharmacologically active dose (PAD)**.
-- For **protein/biologic products: ≤ 30 nmol** total.
-
-Anything sub-therapeutic but above the microdose ceiling is a *non-microdose exploratory* study (ICH approaches 3–5 below) — still Phase 0 in spirit, not a microdose.
-
-## Regulatory frame
-
-**ICH M3(R2)** (effective Dec 2009) defines **5 example approaches** to exploratory clinical trials. Condensed:
-
-1. Microdose, single dose — ≤100 µg, ≤1/100 NOAEL & PAD.
-2. Microdose, repeat — ≤100 µg/day, ≤5 doses, ≤500 µg total.
-3. Single sub-therapeutic → therapeutic-range dose.
-4. ≤14-day repeat dose, no therapeutic-range intent, starting sub-therapeutic.
-5. ≤14-day repeat dose into therapeutic range.
-
-Approaches 1–2 are microdosing; 3–5 are larger sub-therapeutic/therapeutic exploratory designs with progressively heavier tox packages. None aim at MTD.
-
-**FDA Exploratory IND (eIND) Guidance, 2006** — created the "Phase 0" / exploratory IND route in the US; reduced preclinical requirements in exchange for limited, sub-therapeutic, no-therapeutic-intent dosing.
-
-**EMA** — aligned with ICH M3(R2); same microdose definition.
-
-**ClinicalTrials.gov** — there is **no "Phase 0" value**. These register as **"Early Phase 1"** (`aggFilters=phase:0` in the API). This is the single most important search fact: confirmed in prior corpus work.
-
-## Full term list
-
-Terms you'll see for this protocol class, grouped by what they actually denote.
-
-**Umbrella / regulatory labels**
-
-- Phase 0 trial / Phase '0' study
-- Exploratory clinical trial (ICH M3(R2) language)
-- Exploratory IND study / eIND study (FDA)
-- Early Phase 1 (ClinicalTrials.gov registry label)
-- First-in-human exploratory study
-
-**Dose-class terms**
-
-- Microdose / microdosing study / human microdosing
-- Sub-therapeutic dose study
-- Sub-pharmacological / sub-clinical dose
-- Tracer dose study
-
-**Methodology / readout terms** (how the tiny signal is detected)
-
-- Microtracer study (esp. ¹⁴C microtracer)
-- AMS — Accelerator Mass Spectrometry
-- PET microdosing / molecular imaging microdose (¹¹C, ¹⁸F tracers)
-- LC-MS/MS ultra-sensitive bioanalysis
-- Optical / fluorescence imaging microdose (e.g. the two corpus protocols)
-- Radiolabelled microdose / dosimetry study
-
-**Design variants**
-
-- Cassette microdosing / cocktail microdosing (several compounds in one sub-therapeutic dose)
-- Intra-Target Microdosing (ITM) — local microdose into ~1% of a tissue/organ to reach locally active concentrations while staying systemically a microdose
-- Microtracer absolute bioavailability (AB) study — oral therapeutic dose + IV ¹⁴C microtracer
-- Adaptive Phase 0 / Phase 1 (rolling design)
-- Proof-of-mechanism (early) — sometimes used loosely for Phase 0
-
-**Bodies / sources**
-
-- Phase-0 Microdosing Network (phase-0microdosing.org)
-
-## Related-but-distinct (exclude these)
-
-Worth naming explicitly so the search doesn't drag them in:
-
-- **Conventional Phase 1 / FIH SAD-MTD** — therapeutic-range, dose-escalation, safety-focused. Not Phase 0.
-- **"Phase 0" in oncology window-of-opportunity sense** — pharmacodynamic studies in patients pre-surgery; *sometimes* microdose, often not. Judge by dose, not the label.
-- **Psychedelic "microdosing"** — recreational/wellness use of sub-perceptual doses. Completely different thing; will pollute keyword searches for "microdose".
-- **Bioequivalence / mass-balance ADME** at therapeutic dose — uses ¹⁴C but is *not* a microdose.
-
-## Two layers: corpus vs. this project
-
-These are separate, deliberately:
-
-- **Corpus (`protocol_corpus`)** is general purpose. Any study is valid game if it has a **real posted protocol PDF**, sourced **only from ClinicalTrials.gov**. No Phase 0 filter applies at this layer.
-- **This project (`protocol_phase_0`)** *pulls a subset* from the corpus matching our Phase 0 selection definition (below). So job 2 is two steps: (a) find ct.gov studies with protocol PDFs and add them to the corpus, then (b) select those matching our definition into this project.
-
-### Selection definition for this project — TO CONFIRM
-
-The candidate selection rule is **AMS PK microdosing** (or whatever definition we derive). Open question: narrow vs. broad — see the note below, this is the decision to settle before job 2.
-
-Hard constraint regardless: protocols only come from **ClinicalTrials.gov**, and only if a **real protocol PDF is posted** (the limiting factor — most Phase 0 studies never post one).
-
-## Note on the two protocols already in the corpus
-
-Both are **imaging microdose** studies, not classic oral-AMS PK microdosing:
-
-- **NCT02901925** — ABY-029, fluorescence-guided microdose in recurrent glioma.
-- **NCT01532024** — NAP, optical/neutrophil-activation imaging probe in acute lung injury (an ITM-style lung study).
-
-Decision for job 2 (project selection, not corpus): narrow to **classic AMS/PK microdosing**, or broad **any sub-therapeutic exploratory** (PK + imaging)? This matters because under a strict AMS-PK rule, **neither existing protocol qualifies** — both are imaging microdose. Trade-off: AMS-PK is the cleanest, most homogeneous class for SoA characterisation, but almost nothing PK-centric posts a protocol PDF, so the pulled set will be tiny. Broad keeps the two we have and yields more protocols, at the cost of a more heterogeneous set.
+Each is a demand on how the SoA *model* stores timing, not on the science. They are exactly
+the cases the general 12-pattern atlas (`protocol_soa_patterns`) is thin on, because that
+scan is light on short, dosing-anchored, footnote-heavy early-phase tables. Whether USDM
+carries each cleanly is assessed in the report (`docs/report/early_phase_soas.md`) — traced
+against DDF-RA, not asserted.
 
 ---
-*Sources: ICH M3(R2); FDA Exploratory IND Guidance 2006; EMA M3(R2); TRACER CRO M3(R2) approaches summary; Burt et al., Phase 0/microdosing reviews; Phase-0 Microdosing Network.*
+
+## Background — the study type
+
+### Definition
+
+A **Phase 0 / exploratory study** gives a *sub-therapeutic* exposure under a reduced
+preclinical package, purely to gather early PK, PD, mechanistic or imaging data — not to
+assess safety/tolerability or efficacy, and not for therapeutic benefit. In practice the
+corpus for this project is broader than strict Phase 0: it is **early-phase experimental
+medicine** — short, small-population, intensively-sampled, dosing-anchored studies,
+including the conventional Phase 1 clin-pharm PK/DDI studies (the four Lilly/Loxo protocols)
+whose SoAs raise the issues above.
+
+The tightest well-defined sub-class is the **microdose study**: below all of ≤ 100 µg total,
+≤ 1/100th of the NOAEL, and ≤ 1/100th of the pharmacologically active dose (≤ 30 nmol for
+biologics). ICH M3(R2) sets out five example exploratory-trial approaches; the FDA
+Exploratory IND guidance (2006) created the US "Phase 0" route; EMA aligns with ICH.
+
+Search fact that still matters: **ClinicalTrials.gov has no "Phase 0" value** — these
+register as **Early Phase 1**, and much pharma early-phase work is labelled Phase 1.
+
+### "EMP"
+
+Used informally for these studies; **unconfirmed**. The field is "Experimental Medicine
+(EM)", so best guess is "Experimental Medicine Protocol" — not verified.
+
+### Terminology
+
+| Group | Terms |
+|---|---|
+| Umbrella / regulatory | Phase 0; exploratory clinical trial (ICH M3(R2)); exploratory IND / eIND (FDA); Early Phase 1 (ct.gov label); experimental medicine; first-in-human exploratory |
+| Dose class | microdose / microdosing; sub-therapeutic; sub-pharmacological / sub-clinical; tracer dose |
+| Methodology / readout | microtracer (¹⁴C); AMS (accelerator mass spectrometry); PET microdosing; LC-MS/MS bioanalysis; optical / fluorescence imaging microdose; radiolabelled microdose / dosimetry |
+| Design variant | cassette / cocktail microdosing; Intra-Target Microdosing (ITM); microtracer absolute bioavailability; adaptive Phase 0/1; DDI / clin-pharm crossover |
+
+### Excluded (to keep searches clean)
+
+Psychedelic "microdosing" (recreational); and — as a *study-type* boundary only —
+therapeutic-dose mass-balance / ADME and oncology window-of-opportunity studies. Note the
+project no longer excludes conventional clin-pharm DDI/PK: those are precisely where the SoA
+representation issues show up.
+
+### Two layers: corpus vs. project
+
+- **Corpus (`protocol_corpus`)** — general purpose; any study with a real posted protocol
+  PDF sourced only from ClinicalTrials.gov. No phase filter.
+- **This project (`protocol_phase_0`)** — selects the early-phase subset used for the
+  analysis. The chosen/rejected list is `docs/project_protocols.md`.
+
+---
+*Sources: `sources/EMP Study.docx` (notes + SoA screenshots, incl. NCT05469126 / J2A-MC-GZGM); ICH M3(R2); FDA Exploratory IND Guidance 2006; EMA M3(R2); Phase-0 Microdosing Network. SoA-shape and USDM-tracing findings: `docs/lessons_learned.md`.*

@@ -13,6 +13,7 @@ Project state is kept in three committed files so it travels with the repo:
 - **`status.md`** — log of actions undertaken (newest first). Append a dated entry at the **end** of any session that changed state.
 - **`next_steps.md`** — the current plan / what to do next. Keep it the single source of truth for "what now"; rewrite it as priorities change.
 - **`lessons_learned.md`** — decisions and knowledge we don't want to lose. Append when a decision is made or a fact is established; only remove an entry if it turns out wrong.
+- **`project_protocols.md`** — the project corpus: the single definitive list of protocols used for the analysis, split into chosen and rejected. Add any new protocol here when it's brought into the project.
 
 **At session start:** read this file plus all three state files before assuming anything.
 **At session end:** update the three files before finishing.
@@ -21,6 +22,6 @@ Project state is kept in three committed files so it travels with the repo:
 
 ## Report
 
-Single living deliverable: `docs/report/phase0_soa.md` (hand-edit) → build with
-`python3 report_theme/build.py docs/report/phase0_soa.md` → self-contained themed `phase0_soa.html`.
+Single living deliverable: `docs/report/early_phase_soas.md` (hand-edit) → build with
+`python3 report_theme/build.py docs/report/early_phase_soas.md` → self-contained themed `early_phase_soas.html`.
 Needs `pip install markdown`. One source file, one build call (not the soa_patterns multi-file assembler).

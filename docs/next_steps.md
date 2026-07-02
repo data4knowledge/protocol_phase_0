@@ -2,8 +2,19 @@
 
 The current plan. Single source of truth for "what now". Newest plan on top; rewrite as priorities change.
 
-## NOW (2026-07-02) — map the EMP SoA-representation patterns to the atlas + USDM
+## NOW (2026-07-02) — TRACE Issues 1 & 4 against DDF-RA, then finalise the report
 
+**Done this session:** `sources/EMP Study.docx` read; `phase0_definition_and_terms.md` refocused on the 5 SoA-representation issues; report rewritten + renamed to `docs/report/early_phase_soas.md` ("Early Phase SoAs") with the 26-protocol corpus (Part 2) and the 5 issues (Part 3). USDM status marked **traced** (Issues 2, 3, 5 → known relative-timing / sub-timeline primitives) vs **open**.
+
+**PICK UP HERE — the two open USDM questions need a DDF-RA trace (do not assert; flag guesses):**
+1. **Issue 1 — interval/duration activities** (24h urine in 8h bins, start→end, spanning day columns, some starting pre-dose): does USDM represent a collection *interval* as first-class (activity duration / paired bounding timings), distinct from a ± scheduling window? Likeliest genuine delta.
+2. **Issue 4 (parts)** — repeat counts (triplicate), conditional repeats ("repeat daily until resolution"), and ordering *among co-timed activities* (ECG → vitals → bloods at the same timepoint).
+
+Trace against `DDF-RA/Deliverables`: `API/USDM_API.json`, `CT/USDM_CT.xlsx`, `RULES/USDM_CORE_Rules.xlsx` (v4.0). Then write the verdicts into Part 3 and rebuild (`python3 report_theme/build.py docs/report/early_phase_soas.md`). **Mount `DDF-RA` first.**
+
+---
+
+### Original framing note (kept for context)
 Scope reframed by Dave (2026-07-02): this is the SAME Phase-0 piece, initially loosely specified. The deliverable is the **USDM delta for these concrete SoA-representation patterns** — NOT the single-day-archetype boundary. The prior "no USDM delta" conclusion was on too narrow a framing and is effectively reopened.
 
 **Test set = the four in `sources/protocols.docx`, all already onboarded in `protocol_corpus`:**
@@ -46,11 +57,11 @@ Remaining:
 
 ## Now — Job 3 (characterise SoAs + USDM delta) + write the report
 
-Protocol set is in hand: the original 5 + 11 new **IN** candidates (verdicts + findings in `docs/phase0_candidates_judged.md`). Search, ingest and judgement are done. What's left:
+Protocol set is in hand: the chosen/rejected corpus is in `docs/project_protocols.md` (SoA-shape findings in `lessons_learned.md`). Search, ingest and judgement are done. What's left:
 
 1. ~~**Resolve the verdicts with Dave.**~~ **DONE (2026-06-25).** IN set = **12**: the 11 clean IN + **NCT04204993** (influenza challenge, included as the days-scale challenge edge case). **NCT03958630** (TSPO multi-year longitudinal) **set aside** — stays in corpus, out of Phase-0. OUT (NCT04234672, NCT03907540, NCT04965389) stay in corpus, out of subset.
 2. ~~**Test the two USDM questions.**~~ **DONE (2026-06-25)** — traced against DDF-RA v4.0 (API + CT + CORE rules); full answers + rule IDs in `lessons_learned.md`. Headline: **Q1 (challenge anchor) = not a real question** — a timeline times events off other events; "study drug" vs "challenge" is a clinical label, not a modelling distinction. (CT does carry a "Challenge Agent" role C158128 as an optional label, nothing more. Also: NCT03306589's LPS is the study drug — bad example, don't repeat.) **Q2 (narrative round-trip) = YES, no delta** — SoA is a timing graph not a matrix; narrative supplies activities + timings = the graph's content; the timeline container (exit/anchor/ordering) is unconditional on every timeline so a gridded protocol needs it identically, hence not a Phase-0 delta. (Earlier "flow skeleton" framing was wrong; Dave corrected it.) **Validated with Dave.**
-3. **PICK UP HERE — verify the pattern across all 12.** Both USDM questions closed as non-issues (see item 2). The whole archetype reduces to one claim: **every protocol is an intervention with timing measured from it (usually after; before when prepping).** That is ordinary timeline behaviour — no USDM problem. **But this is not yet verified against the actual protocols** — do NOT trust the `phase0_candidates_judged.md` one-liners (they already misled me: NCT03306589's LPS is the study drug, not a challenge). To verify: **mount `protocol_corpus`** and read each of the 12 extracted schedules, checking the timing anchor is an intervention — flag any anchored on something that ISN'T (a scan/sample that isn't an intervention, a calendar/visit day, or an event like a measurement threshold). Two to doubt up front: **NCT03861000** (no schedule grid at all — visits only, no timing) and **NCT04204993** (multi-day influenza confinement — timing may hang off study days, not one intervention).
+3. **PICK UP HERE — verify the pattern across all 12.** Both USDM questions closed as non-issues (see item 2). The whole archetype reduces to one claim: **every protocol is an intervention with timing measured from it (usually after; before when prepping).** That is ordinary timeline behaviour — no USDM problem. **But this is not yet verified against the actual protocols** — do NOT trust the `project_protocols.md` one-liners (they already misled me: NCT03306589's LPS is the study drug, not a challenge). To verify: **mount `protocol_corpus`** and read each of the 12 extracted schedules, checking the timing anchor is an intervention — flag any anchored on something that ISN'T (a scan/sample that isn't an intervention, a calendar/visit day, or an event like a measurement threshold). Two to doubt up front: **NCT03861000** (no schedule grid at all — visits only, no timing) and **NCT04204993** (multi-day influenza confinement — timing may hang off study days, not one intervention).
 4. **Then write Part 2** (the 12-protocol set) and **Part 3** (SoA characterisation). Given the above, the USDM section is now short: this archetype raises **no new USDM scheduling issue** — interventions with timing measured from them, which is what timelines do. Worked example optional. Rebuild HTML (`python3 report_theme/build.py docs/report/phase0_soa.md`). Reminder: only the Phase-0 delta vs the 12-pattern atlas — do NOT rebuild the general atlas.
 
 ### Cleanup / optional

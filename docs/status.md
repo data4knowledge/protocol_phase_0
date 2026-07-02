@@ -2,6 +2,36 @@
 
 Log of actions undertaken. Newest first. Append a dated entry at the end of any session that changed state.
 
+## 2026-07-02 (later 5) — GT built for the two microdose protocols; root scratch files deleted
+
+- **Ground truth built (Dave ran) for NCT02901925 and NCT01532024** — both wrote OK but **no SoA extracted** (`soa: None`); flagged in `project_protocols.md` (genuine no-grid vs page-finder miss, revisit). All 26 chosen now have GT.
+- **Deleted root scratch files** (Dave): `pharma_phase1_results.csv`, `phase0_ingest_ids.txt`, `phase0_results.csv`, `phase1_pids.txt`. Nothing depends on them; `search.py` regenerates `pharma_phase1_results.csv` on rerun. Root now: `CLAUDE.md`, `memory.md`, `search.py`, `docs/`, `report_theme/`, `sources/`.
+
+## 2026-07-02 (later 4) — Refocused definition doc + rewrote/renamed the report around the EMP SoA issues
+
+- **Read `sources/EMP Study.docx`** (notes + 7 SoA screenshots; image2/3 = GZGM/NCT05469126). Extracted the concrete issues: 8h urine bins crossing day boundaries (incl. pre-dose `-24 to -16h`), dose-relative extended-hour PK times (`24…240h`, "(D2)…(D31)"), per-cell `P` predose anchors, footnote-encoded windows/triplicate/conditional-repeat/ordering, and a pre-dose-start parallel sampling series.
+- **`docs/phase0_definition_and_terms.md` refocused** — now leads with "the issue at hand" (the 5 SoA-representation patterns, grounded in the screenshots); microdose/Phase-0 definition kept as background.
+- **Report renamed `phase0_soa.md` → `early_phase_soas.md`** (Dave: "Early Phase SoAs"). Rewrote Part 2 (26-protocol corpus, 4 EMP highlighted) and Part 3 (5 issues, each with a USDM status: **traced** vs **open**). Deleted old `phase0_soa.{md,html}`. Updated the build reference in `CLAUDE.md`. Built HTML (`early_phase_soas.html`) — renders.
+- **USDM verdicts NOT asserted.** Issues 2, 3, 5 map to already-traced primitives; **Issue 1 (interval/duration activity, start→end) and parts of Issue 4 (repeat counts, conditional repeats, co-timed ordering) flagged OPEN — need a DDF-RA trace.** That trace is the next step.
+
+## 2026-07-02 (later 3) — Consolidated the two protocol docs into one corpus
+
+- **Merged `phase0_candidates_judged.md` into `project_protocols.md`** and deleted the former. One document now: the project corpus, split into **chosen (26)** and **rejected (2)**. Dropped the IN/OUT/BORDERLINE scheme.
+- **Rejected = NCT03958630** (multi-year longitudinal, not single-day) and **NCT04805983** (SAD-like, dropped pre-onboarding, never in corpus). Everything else chosen, incl. the influenza-challenge NCT04204993 and the three former-OUT clin-pharm.
+- SoA-shape findings from the old judged doc are preserved in `lessons_learned.md`; updated the pointer there and the two `next_steps.md` references. Old status log entries left untouched (append-only).
+
+## 2026-07-02 (later 2) — Reclassified 3 conventional clin-pharm OUT→IN
+
+- **NCT04234672, NCT03907540, NCT04965389 moved OUT → IN** in `project_protocols.md` (Dave). Same conventional clin-pharm class as the four EMP protocols, so in scope under the SoA-representation reframe. IN=21, OUT=0. `phase0_candidates_judged.md` still records the original OUT verdict.
+
+## 2026-07-02 (later) — Created the definitive project protocol list
+
+- **New file `docs/project_protocols.md`** — one canonical list of every protocol the project uses for its assessment, so there's a single source of truth instead of IDs scattered across status/next_steps prose.
+- **27 processed protocols**, each with sponsor/indication/SoA form/timing anchor/GT/status. Status = EMP (4 new) · IN (18) · BORDERLINE (2) · OUT (3).
+- **The four EMP protocols added** and confirmed present: NCT05469126, NCT05176314, NCT06085482, NCT05444556.
+- Cross-checked all 27 IDs against `protocol_corpus/registry.yaml` and the `protocols/` dirs (GT flags verified). NCT04805983 deliberately excluded (dropped pre-onboarding, not in corpus). NCT02901925 / NCT01532024 in the set but GT still pending.
+- Pointer added to `CLAUDE.md`. No git, no pipeline runs, no corpus changes.
+
 ## 2026-07-02 — Two source docs added; scope reframed to the EMP SoA-representation delta; 4 test protocols confirmed in corpus
 
 - **Dave added two docs to `protocol_phase_0/sources/`:** `EMP Study.docx` (problem statement + SoA screenshots) and `protocols.docx` (four NCT IDs that MUST be in the test set).

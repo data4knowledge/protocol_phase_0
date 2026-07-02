@@ -30,7 +30,7 @@ Traced against `DDF-RA/Deliverables`: `API/USDM_API.json` (class+cardinality), `
 - **Two SoA shapes in the archetype.** ~Half carry a conventional activity×timepoint grid; the other half (academic PET + challenge studies) have **no SoA table at all** — a narrative "Study Procedures" section plus a scan-timing prose list. The page-finder finding nothing on these is the signal, not a bug. Open USDM question: does a narrative-only schedule round-trip into USDM SoA without inventing a table the protocol never had?
 - **Challenge-agent timing anchor.** Distinct axis: assessments timed relative to a challenge administration (LPS, alcohol, amphetamine, endotoxin, influenza — "3 h post-LPS"), not the study drug. Open USDM question: can USDM anchor a timeline on the challenge agent as cleanly as on the study drug? (Both flagged for Dave; not asserted.)
 - **Archetype boundary the read enforces (metadata can't):** ¹⁴C absolute-bioavailability + therapeutic-dose mass-balance/ADME, and formulation/food-effect studies are OUT even when they contain an IV microtracer — the microtracer is only the ABA component, not the study purpose. Confirmed on NCT04234672, NCT03907540, NCT04965389.
-- **Candidate judgement lives in** `docs/phase0_candidates_judged.md` (verdict table + findings).
+- **The chosen/rejected protocol list lives in** `docs/project_protocols.md` (the project corpus).
 
 ## Corpus repo hygiene (decided 2026-06-25)
 
