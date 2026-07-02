@@ -2,6 +2,20 @@
 
 Log of actions undertaken. Newest first. Append a dated entry at the end of any session that changed state.
 
+## 2026-07-02 — Two source docs added; scope reframed to the EMP SoA-representation delta; 4 test protocols confirmed in corpus
+
+- **Dave added two docs to `protocol_phase_0/sources/`:** `EMP Study.docx` (problem statement + SoA screenshots) and `protocols.docx` (four NCT IDs that MUST be in the test set).
+- **The four test protocols — all four already fully onboarded in `protocol_corpus`** (PDF + ctgov.json + carved soa.pdf + built ground_truth.yaml + registry entry). All Eli Lilly / Loxo, Phase 1, healthy-volunteer, BASIC_SCIENCE PK/DDI studies:
+  - **NCT05469126** = J2A-MC-GZGM — clarithromycin + LY3502970 DDI (this is "Example 2" in EMP Study.docx; the SoA screenshots come from it).
+  - **NCT05176314** — pirtobrutinib + rosuvastatin DDI (Loxo).
+  - **NCT06085482** — LY3502970 Phase 1.
+  - **NCT05444556** — imlunestrant female healthy participants (crossover).
+- **These are conventional clin-pharm DDI/PK studies, NOT the single-day Phase-0 archetype** the project previously locked (and previously excluded this class). I flagged the tension; **Dave resolved it: SAME piece of work, initially loosely specified.** The real target is the SoA-representation patterns below, not the single-day archetype boundary.
+- **Scope reframe (Dave):** the earlier "no USDM delta" conclusion was made on too narrow a framing (challenge-anchor + narrative round-trip). The actual delta is the concrete SoA/footnote/timing representation patterns in EMP Study.docx PLUS the general "parallel timeline starting pre-dose" issue.
+- **Consolidated issue inventory (5, to be confirmed complete next session) — see next_steps.md.**
+- **Verified from the GZGM ground truth:** the extractor captures day columns as `timepoints` fine, but pushes sub-day dose-relative PK times (24/36/48/72/96/120/168/240h rel. to LY dosing) and predose "P" into free-text `conditions` — i.e. the exact representation gap the EMP doc names.
+- **No pipeline utilities run, no git, no files changed in corpus.** Corpus + phase_0 repos mounted this session. `protocol_soa_patterns` NOT yet mounted (needed next session for the atlas mapping).
+
 ## 2026-06-29 — Pharma Phase 1 corpus onboarded; SoA finder patterns + redacted-SoA convention
 
 - **Pivot thread "why no pharma Phase 0 protocols?" — answered.** Not a does-pharma-do-it gap, a protocol-*posting* gap. CT.gov v2 has no `PHASE0`; Phase 0 == `EARLY_PHASE1`. Pharma's early experimental-medicine work is mostly labelled **Phase 1** (or unregistered). Posting a Phase 0/1 protocol PDF is voluntary (not an "applicable clinical trial"), so academia/NIH post; pharma posts ~nothing. → Re-aimed the search at **industry Phase 1 experimental-medicine**.
