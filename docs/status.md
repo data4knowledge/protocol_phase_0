@@ -2,6 +2,29 @@
 
 Log of actions undertaken. Newest first. Append a dated entry at the end of any session that changed state.
 
+## 2026-07-26 — NCT05262387 added to the corpus (27 chosen)
+
+Brought in from `protocol_corpus` while working the corpus verification plan (Dave is hand-verifying
+its USDM workbook first, so a curated version will exist). Eli Lilly, **Phase 1, T1D patients (not
+healthy), n=25** — LY900014 vs insulin lispro with a **prolonged exercise challenge**. Nearest
+existing entries are the LPS/endotoxin challenge studies; this is the first exercise challenge and
+the first in patients rather than healthy volunteers.
+
+**Why it earns a place — it hits four of the five issues in one protocol.** Its SoA is two grids:
+a visit-level timeline plus a full **assessment-day sub-timeline** — arrive at CRU → standardised
+meals each with a bolus "immediately (0-2 minutes) before" → venous cannula → pump basal rate
+reduction 50%/100% → exercise 3 × 17 min with two 4.5-min breaks → post-exercise rest → dinner
+MMTT → cannula out. That gives: issue 5 (parallel sub-timeline starting pre-challenge), issue 1
+(**interval activities with real durations — here the intervention itself, arguably a better
+exemplar than the 8h urine bins**), issue 2 (challenge-relative running-time offsets), issue 4
+(ordering among co-timed activities, repeat counts).
+
+**CAVEAT — heavy CCI redaction.** Several timings read e.g. "PK will be collected over CCI minutes
+after start of exercise"; the values are not recoverable from the PDF. Structure is analysable,
+absolute timings are not — any USDM claim must be about the shape, not the numbers.
+
+Not yet assessed against the 12-pattern atlas; no report change.
+
 ## 2026-07-02 (later 6) — Added VERSION 0.1.0; report stamped and rebuilt
 
 - **New `VERSION` file = `0.1.0`** at repo root.

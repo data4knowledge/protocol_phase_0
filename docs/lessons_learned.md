@@ -9,6 +9,13 @@ Decisions and knowledge we don't want to lose. Append on new decisions/facts; re
 - **Two layers, kept separate:** `protocol_corpus` is general purpose — any study with a posted protocol PDF, **sourced only from ClinicalTrials.gov**, no Phase 0 filter. This project (`protocol_phase_0`) pulls a Phase 0 subset by our definition.
 - **The real target is SoA shape, not drug chemistry.** Microdose/PK is a well-defined subset, not the boundary. The archetype (from Dave): "Phase 0 / early phase / experimental medicine", often single-day, small population, many such trials run.
 
+- **Corpus grew to 27 (2026-07-26): NCT05262387** — exercise-challenge T1D study, the first
+  entry that is (a) in patients rather than healthy volunteers and (b) anchored on a physical
+  challenge rather than a dose or scan. Its assessment-day sub-timeline exercises issues 1, 2, 4
+  and 5 simultaneously, so it is the natural worked example when the report needs one protocol
+  that shows the interaction of the patterns rather than one pattern each. Heavily CCI-redacted —
+  usable for structure, not for timing values.
+
 ## USDM / SoA facts (Dave is the authority — trace before asserting)
 
 - **Discrete point-in-time actions** (1h, 2h… off dosing): USDM handles cleanly — scheduled activity instance with a relative timing offset.

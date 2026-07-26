@@ -34,6 +34,7 @@ descriptors from the read (see `lessons_learned.md` for the SoA-shape findings).
 | NCT04234672 | Neurocrine Biosciences | Healthy | [14C]TAK-831 ABA + mass-balance, n=6 | grid + PK lists | dose |
 | NCT03907540 | Kadmon | Autoimmune | [14C]-KD025 ABA + mass-balance, n=5 | grid + PK lists | dose |
 | NCT04965389 | Bristol-Myers Squibb | Healthy | milvexian microtracer + food-effect, n=17 | grid (2) | dose |
+| NCT05262387 | Eli Lilly | Diabetes Mellitus, Type 1 | LY900014 vs insulin lispro, exercise challenge in T1D patients, n=25 | grid (2: visits + assessment-day sub-timeline) | exercise challenge / meal |
 
 ## Rejected
 

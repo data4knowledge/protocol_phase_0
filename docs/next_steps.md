@@ -2,6 +2,16 @@
 
 The current plan. Single source of truth for "what now". Newest plan on top; rewrite as priorities change.
 
+## ALSO PENDING (2026-07-26) — assess NCT05262387 against the atlas
+
+New 27th corpus entry (see `status.md`). Not yet mapped to the 12-pattern atlas and not in the
+report. When the DDF-RA trace below is done, consider using it as the worked example for the
+**interaction** of issues 1/2/4/5 — its assessment-day sub-timeline shows all four at once, and
+its interval activities are the intervention itself. Dave is hand-verifying its USDM workbook in
+`protocol_corpus` (corpus verification plan), so a curated USDM version will be available.
+
+---
+
 ## NOW (2026-07-02) — TRACE Issues 1 & 4 against DDF-RA, then finalise the report
 
 **Done this session:** `sources/EMP Study.docx` read; `phase0_definition_and_terms.md` refocused on the 5 SoA-representation issues; report rewritten + renamed to `docs/report/early_phase_soas.md` ("Early Phase SoAs") with the 26-protocol corpus (Part 2) and the 5 issues (Part 3). USDM status marked **traced** (Issues 2, 3, 5 → known relative-timing / sub-timeline primitives) vs **open**.
