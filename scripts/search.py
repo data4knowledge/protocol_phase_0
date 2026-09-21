@@ -1,3 +1,62 @@
+"""
+search.py — the candidate finder for protocol_phase_0.
+
+WHAT IT DOES
+    Queries the ClinicalTrials.gov API v2 for trials matching a keyword scope plus
+    server-side filters, pages through the ENTIRE result set via `nextPageToken`, and
+    writes one row per trial to a CSV.
+
+    It finds candidates. It does not download anything and does not touch the corpus.
+    Onboarding a candidate — PDF, ctgov.json, registry entry, ground truth — is
+    `protocol_corpus/scripts/corpus.py`, and that is the only thing that should do it.
+
+HOW TO RUN
+    python3 scripts/search.py                 # the default hunt (see below)
+    python3 scripts/search.py "Oncology"      # same, narrowed by condition
+
+    Writes `pharma_phase1_results.csv` in the current working directory. Needs
+    `requests`; no API key.
+
+THE DEFAULT HUNT
+    phase:1, funderType:industry, docs:prot, statuses that tend to carry a posted
+    document, and DEFAULT_KEYWORDS = "Phase 0" OR "Exploratory IND" OR "Microdose" OR
+    "Experimental Medicine". That combination produced the 17-protocol industry
+    Phase 1 set on 2026-06-29.
+
+    To run a different hunt, change `DEFAULT_KEYWORDS` — do not write a second script.
+    For the ascending-dose search in `docs/next_steps.md` step 5, that means
+    "single ascending dose" OR "multiple ascending dose" OR "first in human",
+    everything else unchanged.
+
+    Quote multi-word phrases. Unquoted phrases are parsed as a bare OR of words and
+    the net explodes — 11,844 hits against 161 on the run that taught us this.
+
+OUTPUT COLUMNS
+    NCT_ID, Title, Sponsor, Sponsor_Class, Phase, Has_Protocol_Doc,
+    Planned_Enrollment, Allocation, URL
+
+WHY THE FILTERS ARE WHAT THEY ARE
+    phase       The `aggFilters` shorthand, 0-4. There is no PHASE0 value in the API;
+                Phase 0 is EARLY_PHASE1, which `phase:0` selects. Do NOT frame a hunt
+                on it — "Early Phase 1" is a CTG grab-bag (453-patient RCTs, vaccines,
+                herbal medicine) and most early-phase pharma work is labelled Phase 1.
+                Keywords do the scoping; the phase filter is a supplementary slice.
+    funderType  industry | nih | other | fed. Posting a Phase 0/1 protocol is
+                voluntary, so academia and NIH post and pharma posts close to nothing.
+                Expect an academic skew on any hunt that does not force industry.
+    docs:prot   Server-side "has a posted protocol document". NOISY — it also flags
+                studies that merely declare a protocol in the IPD statement, which is
+                why `Has_Protocol_Doc` is recomputed per study from
+                `documentSection.largeDocumentModule.largeDocs`. Trust that column,
+                not the filter.
+
+    `documentSection` is a TOP-LEVEL sibling of `protocolSection`, not nested inside
+    it. Reading `protocolSection.documentSection` silently yields nothing and looks
+    like "no study has a PDF".
+
+    Fuller notes: `docs/lessons_learned.md` section "CTG search recipe".
+"""
+
 import requests
 import json
 import csv

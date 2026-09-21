@@ -179,23 +179,38 @@ set of real protocols and, most directly, by the SoA screenshots in <code>source
 note <code>docs/phase0_definition_and_terms.md</code>); Part 2 is the protocol set; Part 3 is the
 issue-by-issue characterisation and USDM assessment.</p>
 <blockquote>
-<p><strong>Status: draft.</strong> The five issues are characterised and grounded (Part 3). The USDM verdicts
-are marked either <strong>traced</strong> (settled against DDF-RA in prior work, cited) or <strong>open</strong>
-(needs a DDF-RA trace — the current next step). No USDM capability is asserted without a trace.</p>
+<p><strong>Status: draft, and behind the project.</strong> The five issues below are characterised and
+grounded (Part 3), with USDM verdicts marked either <strong>traced</strong> (settled against DDF-RA in
+prior work, cited) or <strong>open</strong> (needs a DDF-RA trace). No USDM capability is asserted without
+a trace.</p>
+<p><strong>Two things are not yet in this document</strong> (2026-09-21):</p>
+<ol>
+<li><strong>No issue has been mapped to the twelve-pattern atlas.</strong> The report is framed as the delta
+   against that atlas, and the comparison has not been made. An issue that turns out to be an
+   existing atlas pattern is not a delta and should leave.</li>
+<li><strong>Scope was expanded to SAD and MAD dose-escalation studies</strong>, adding a sixth issue — the
+   cohort / dose-level axis, sentinel dosing, escalation decision gates, and MAD repeat-dosing
+   days. Written up in <code>docs/phase0_definition_and_terms.md</code> § 6, grounded in twelve
+   ascending-dose protocols already in <code>protocol_corpus</code>, <strong>not yet read and not yet traced</strong>.</li>
+</ol>
+<p>Until both are done this report understates the question it is asking. Plan:
+<code>docs/next_steps.md</code>.</p>
 </blockquote>
 <h2 id="part-1-what-these-studies-are">Part 1 · What these studies are</h2>
 <p>A <strong>Phase 0 / exploratory study</strong> gives a sub-therapeutic exposure under a reduced preclinical
 package to gather early PK, PD, mechanistic or imaging data — not safety/efficacy, not
 therapeutic benefit. In practice the set used here is broader: <strong>early-phase experimental
-medicine</strong>, which includes conventional Phase 1 clin-pharm PK/DDI studies. Those turn out to
-be where the SoA representation issues are sharpest.</p>
+medicine</strong>, which includes conventional Phase 1 clin-pharm PK/DDI studies — where the
+cell-level SoA representation issues are sharpest — and, since 2026-09-21, <strong>first-in-human
+dose-escalation studies (SAD and MAD)</strong>, which bring a cohort structure the others do not.</p>
 <p>ClinicalTrials.gov has no "Phase 0" value — these register as <strong>Early Phase 1</strong>, and much
 pharma early-phase work is simply labelled Phase 1. Full definition, thresholds and
 terminology: <code>docs/phase0_definition_and_terms.md</code>.</p>
 <h2 id="part-2-the-protocol-set">Part 2 · The protocol set</h2>
-<p>The corpus for the analysis is <strong>26 protocols</strong> sourced from ClinicalTrials.gov (real posted
-protocol documents only). The full chosen/rejected list, with sponsor, indication, SoA form
-and timing anchor, is <code>docs/project_protocols.md</code>. In shape it splits into:</p>
+<p>The corpus for the analysis is <strong>27 protocols</strong> sourced from ClinicalTrials.gov (real posted
+protocol documents only), plus <strong>12 SAD / MAD candidates</strong> brought into scope on 2026-09-21 and
+not yet read. The full list — chosen, candidates and rejected, with sponsor, indication, SoA
+form and timing anchor — is <code>docs/project_protocols.md</code>. In shape the 27 split into:</p>
 <ul>
 <li><strong>Clin-pharm PK / DDI (Eli Lilly / Loxo)</strong> — the four EMP protocols below; conventional
   crossover PK and drug-drug-interaction designs whose SoAs carry the cell-level structure
@@ -206,6 +221,11 @@ and timing anchor, is <code>docs/project_protocols.md</code>. In shape it splits
   influenza) — assessments timed relative to a challenge administration.</li>
 <li><strong>Imaging microdose</strong> studies (fluorescence / optical probes).</li>
 </ul>
+<p>The twelve <strong>SAD / MAD candidates</strong> sit outside that split and are the evidence for issue 6.
+They were already onboarded in <code>protocol_corpus</code>, so no new search was needed; four carry a
+reviewer-confirmed timeline count. <strong>Ten of the twelve are Eli Lilly</strong>, on top of an already
+Lilly-heavy chosen list — a limitation that has to be fixed or stated before any issue-6
+finding is published.</p>
 <p>The four EMP protocols are the primary evidence set (from <code>sources/protocols.docx</code>), all Eli
 Lilly / Loxo Phase 1 healthy-volunteer PK/DDI:</p>
 <table>
@@ -262,6 +282,12 @@ assert until traced.</em></p>
 <blockquote>
 <p><code>P, 0.5, 1, 2, 4, 6, 8, 12, 16</code> then <code>24 (D2), 36 (D2), 48 (D3) … 120 (D26), 168 (D28), 240 (D31)</code> — <em>"Times are relative to LY dosing"</em></p>
 </blockquote>
+<p><strong>Unverified transcription.</strong> This series was transcribed from a screenshot, not from the
+protocol, and it does not run continuously — <code>96 (D5)</code> followed by <code>120 (D26)</code> cannot both be
+measured from one dose. The likeliest reading is that two crossover periods have been merged,
+the later hours running from a second dose around Day 21. The <em>pattern</em> — running hours past 24,
+with the calendar day in parentheses — is what this issue is about and is not in doubt; the
+specific numbers are, and are being re-read from the protocol.</p>
 <p>Dave's note asks the tool to accept <code>24:00 hr, 36:00 hr, 48:00 hr …</code> — hours that keep
 counting rather than resetting to a day+clock.</p>
 <p><strong>What it demands.</strong> The primary coordinate is the <strong>elapsed time from dosing</strong>; the "(D2)…
@@ -334,7 +360,7 @@ reached on a narrower framing (challenge anchor + narrative round-trip only).</p
 
 <div class="d4k-foot">
   <span><span class="mark">d<span class="four">4</span>k</span>&nbsp;&nbsp;data4knowledge</span>
-  <span>Early Phase SoAs · v0.1.0 · 2026-07-02</span>
+  <span>Early Phase SoAs · v0.1.0 · 2026-09-21</span>
 </div>
 
 </body>

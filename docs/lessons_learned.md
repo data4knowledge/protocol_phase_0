@@ -4,6 +4,7 @@ Decisions and knowledge we don't want to lose. Append on new decisions/facts; re
 
 ## Project scope & architecture
 
+- **Scope EXPANDED (Dave, 2026-09-21) — SAD and MAD are IN.** Single and Multiple Ascending Dose studies join the existing early-phase / experimental-medicine definition. **This reverses a recorded exclusion** — "conventional Phase 1 SAD/MAD" was listed under *Exclude* in this file, and NCT04805983 was rejected in `project_protocols.md` for being "SAD-like". Both reversed; the old lines are annotated in place, not deleted. **Why it is worth it:** not more evidence for the existing five issues, but a sixth structure they do not exercise — the **cohort / dose-level axis** (one printed SoA instantiated per ascending cohort), **sentinel dosing** (a within-cohort split with its own offset), **escalation decision gates** (cohort *n+1* conditional on the safety review of cohort *n*), and **MAD repeat-dosing days** (intensive PK on first and last dosing day, middle days collapsed into a spanning cell). Written up as issue 6 in `phase0_definition_and_terms.md`. **The USDM verdict on issue 6 is OPEN — not traced, do not assert it.** **Oncology dose escalation stays out** (escalates in patients against response, cycle-based — a Phase 2/3 shape). **Evidence needed no new search:** twelve in-scope ascending-dose protocols are already onboarded in `protocol_corpus`, listed in `project_protocols.md`; four carry a reviewer-confirmed timeline count. **Known weakness: ten of the twelve are Eli Lilly**, on top of an already Lilly-heavy chosen list — the set needs non-Lilly SAD/MAD before any issue-6 finding is publishable, or it reads as one sponsor's house style.
 - **Scope REFRAMED (Dave, 2026-07-02) — still the same project, was loosely specified.** The real deliverable is the **USDM delta for concrete SoA-representation patterns**, evidenced by four Lilly/Loxo Phase-1 clin-pharm protocols (`sources/protocols.docx`) + a problem statement (`sources/EMP Study.docx`). The five patterns: (1) interval activities crossing day boundaries (8h urine bins), (2) dose-relative extended-hour timing (24–240h), (3) predose "P" per-cell marker, (4) footnote-encoded semantics (windows, repeats, conditionals, ordering), (5) parallel timeline starting pre-dose. **This reopens the earlier "no USDM delta" conclusion** — that was reached on too narrow a framing (challenge-anchor + narrative round-trip only). The single-day-archetype boundary is NO LONGER the frame; do not exclude these four for being conventional clin-pharm DDI/PK.
 - **Project purpose (original, locked 2026-06-25 — superseded by the 2026-07-02 reframe above):** characterise one under-represented trial type — single-day "experimental medicine" / Phase 0 studies — and find the specific issues their SoAs raise for USDM, vs the existing 12-pattern atlas. The general SoA→USDM mapping is already done elsewhere; this project only finds the **Phase-0 delta**.
 - **Two layers, kept separate:** `protocol_corpus` is general purpose — any study with a posted protocol PDF, **sourced only from ClinicalTrials.gov**, no Phase 0 filter. This project (`protocol_phase_0`) pulls a Phase 0 subset by our definition.
@@ -36,7 +37,7 @@ Traced against `DDF-RA/Deliverables`: `API/USDM_API.json` (class+cardinality), `
 
 - **Two SoA shapes in the archetype.** ~Half carry a conventional activity×timepoint grid; the other half (academic PET + challenge studies) have **no SoA table at all** — a narrative "Study Procedures" section plus a scan-timing prose list. The page-finder finding nothing on these is the signal, not a bug. Open USDM question: does a narrative-only schedule round-trip into USDM SoA without inventing a table the protocol never had?
 - **Challenge-agent timing anchor.** Distinct axis: assessments timed relative to a challenge administration (LPS, alcohol, amphetamine, endotoxin, influenza — "3 h post-LPS"), not the study drug. Open USDM question: can USDM anchor a timeline on the challenge agent as cleanly as on the study drug? (Both flagged for Dave; not asserted.)
-- **Archetype boundary the read enforces (metadata can't):** ¹⁴C absolute-bioavailability + therapeutic-dose mass-balance/ADME, and formulation/food-effect studies are OUT even when they contain an IV microtracer — the microtracer is only the ABA component, not the study purpose. Confirmed on NCT04234672, NCT03907540, NCT04965389.
+- **Archetype boundary the read enforces (metadata can't):** ¹⁴C absolute-bioavailability + therapeutic-dose mass-balance/ADME, and formulation/food-effect studies are OUT even when they contain an IV microtracer — the microtracer is only the ABA component, not the study purpose. Confirmed on NCT04234672, NCT03907540, NCT04965389. **— REVERSED on those three (Dave, 2026-07-02): all three were moved OUT→IN under the SoA-shape reframe and are in the chosen list. The boundary above still stands as a rule; these three are the stated exceptions, kept for their table structure. Annotated 2026-09-21 after a review caught the contradiction.**
 - **The chosen/rejected protocol list lives in** `docs/project_protocols.md` (the project corpus).
 
 ## Corpus repo hygiene (decided 2026-06-25)
@@ -50,9 +51,14 @@ Traced against `DDF-RA/Deliverables`: `API/USDM_API.json` (class+cardinality), `
 - **Microdose** = below all of: ≤100 µg total (≤500 µg / ≤5 doses repeat), ≤1/100 NOAEL, ≤1/100 PAD; ≤30 nmol for biologics.
 - **ICH M3(R2):** 5 exploratory-trial approaches (1–2 microdose, 3–5 non-microdose sub-therapeutic). **FDA Exploratory IND (eIND)** guidance 2006 created the US "Phase 0" route. EMA aligns with ICH.
 - **ClinicalTrials.gov has no Phase 0 value** — these register as **Early Phase 1**.
-- **Exclude** (keep searches clean): conventional Phase 1 SAD/MAD; oncology window-of-opportunity (Phase 0 label but often not sub-therapeutic); psychedelic "microdosing"; therapeutic-dose mass-balance/ADME.
+- **Exclude** (keep searches clean): ~~conventional Phase 1 SAD/MAD~~ **— REVERSED 2026-09-21, SAD/MAD are now IN SCOPE (see Project scope above)**; oncology window-of-opportunity (Phase 0 label but often not sub-therapeutic); psychedelic "microdosing"; therapeutic-dose mass-balance/ADME.
 
 ## CTG search recipe (the good one)
+
+**Implemented in `scripts/search.py`** — that script encodes everything below and is the
+thing to run. Moved there from the repo root on 2026-09-21; its module docstring explains
+each filter. The notes here are the reasoning behind it, kept because the reasoning is what
+gets forgotten.
 
 Find Phase 0 / microdose studies with a real protocol PDF:
 ```
@@ -62,7 +68,7 @@ https://clinicaltrials.gov/api/v2/studies?query.term=microdose%20OR%20microdosin
 - CDN download: `https://cdn.clinicaltrials.gov/large-docs/<last2 of NCT>/<NCT>/<filename>`.
 - ~463 Early Phase 1 with a protocol doc overall. **CORRECTION (2026-06-25):** real PDFs are NOT rare — nearly all docs:prot studies carry a real `hasProtocol:true` largeDocs PDF. Only the *microdose-titled* subset was thin (2). The scarce thing is the **archetype**, not the PDF.
 - **`phase:0` is a junk filter** for the archetype — "Early Phase 1" is a CTG grab-bag (453-pt RCTs, vaccines, herbal medicine). Drop it. Search by `query.term` for the archetype signature + `aggFilters=docs:prot,healthy:y`.
-- **Working discriminator for the broad archetype:** PET "receptor occupancy" / radioligand evaluation / "pharmacological challenge" (fMRI/biomarker), healthy or small-n. The generic "single dose" + "pharmacodynamic" set (~134) is mostly conventional SAD/MAD → exclude.
+- **Working discriminator for the broad archetype:** PET "receptor occupancy" / radioligand evaluation / "pharmacological challenge" (fMRI/biomarker), healthy or small-n. The generic "single dose" + "pharmacodynamic" set (~134) is mostly conventional SAD/MAD — which was an exclusion until 2026-09-21 and is **no longer one**. That set is now a candidate pool, not noise; re-run it if the twelve corpus SAD/MAD protocols prove too Lilly-concentrated.
 - **PDF verification:** `filter.ids=` gets stripped by the fetch redirect — use the single-study endpoint `…/api/v2/studies/NCT?fields=NCTId,DesignModule,DocumentSection`. Bulk list pages cap around pageSize≈25 in this fetch tool (larger returns empty).
 
 ## SoA page-finder (corpus pipeline)
@@ -93,7 +99,7 @@ https://clinicaltrials.gov/api/v2/studies?query.term=microdose%20OR%20microdosin
   - `documentSection` is a **top-level sibling of `protocolSection`**, not nested inside it. Reading `protocolSection.documentSection` silently yields nothing (cost a "0 protocols have PDFs" false alarm).
   - Multi-value `filter.overallStatus` is comma-separated.
 - **Why pharma is near-absent from posted Phase 0/1 protocols:** posting is voluntary (Phase 0/1 are not "applicable clinical trials" under FDAAA), so academia/NIH post and pharma posts the legal minimum (~nothing). Pharma DOES run the studies; they're just labelled Phase 1 and the protocols aren't posted. The doc-bearing set skews academic/NCI by construction.
-- **The 17 pharma Phase 1 set** is corpus enrichment, NOT the Phase-0 archetype (these are conventional clin-pharm: ABA/mass-balance, microtracer, PET occupancy, SAD). Useful as contrast; don't fold into the Phase-0 subset without reading.
+- **The 17 pharma Phase 1 set** is corpus enrichment (ABA/mass-balance, microtracer, PET occupancy, SAD). **Partly superseded 2026-09-21:** the SAD members are no longer out of scope by class. Still: don't fold anything into the project subset without reading it.
 
 ## SoA page-finder — more (2026-06-29)
 
@@ -115,3 +121,138 @@ https://clinicaltrials.gov/api/v2/studies?query.term=microdose%20OR%20microdosin
   ```
 - Safe because `soa: []` validates (it's the not-applicable state) and `signoff` has **no strict schema** (consumers only check truthiness + `.keys()`), so the extra `note` key is tolerated. Audits keying off `validated.signoff.soa` see it resolved, not a finder gap.
 - The per-table `has_cci_redactions` flag is for redactions *inside* an otherwise-extracted table — does NOT apply when the whole SoA is redacted (no table objects exist).
+
+## What changed in `protocol_corpus` (noted 2026-09-21)
+
+This project last touched the corpus on 2026-07-26. It has moved a long way since, and
+several things this project relied on are now named differently or superseded. Verified
+against the repo on 2026-09-21, not read off its documents.
+
+- **The corpus roughly doubled.** ~533 protocol directories on disk; the corpus set lists
+  **506** NCT ids, and its `CLAUDE.md` now states 531 protocols (506 NCT + 25 CORP) + 1 template.
+  Any note in this repo quoting the old "234 protocols" is stale.
+
+- **`scripts/corpus.py` IS the pipeline now.** One command, seven stages (fetch →
+  ground-truth → workbook → fill → roundtrip → extract → compare), driven by `<IDS>` /
+  `--target-set` / `--all` / `--remaining`. `run_pipeline.py` is retired to `scripts/archive/`.
+  **Do not hand-assemble `fetch_ctgov_protocols.py` + `sync_registry.py` +
+  `build_ground_truth.py` into a sequence** — the stages do work a hand-run misses. The
+  onboarding commands recorded in this project's older notes predate it.
+
+- **Three named sets, nested, and a figure without a set name is not a result.**
+  `protocol_corpus/docs/sets/inner_set.txt` (**T1, 15** — protocols carrying a handcrafted workbook, used by
+  `usdm_training`; the only set with content ground truth, so gate 2 and above are measured
+  here), `protocol_corpus/docs/sets/measured_set.txt` (**T2, 104** — every protocol with a reviewer-confirmed
+  timeline count, frozen 2026-09-19; gate 1 is measured here), `protocol_corpus/docs/sets/corpus_set.txt`
+  (**T3, 506** — every NCT protocol). **T1 ⊂ T2 ⊂ T3 is the intent, and does not hold today** —
+  NCT04677179, NCT05089734 and NCT06142383 are in the inner set with no reviewer count. Tracked
+  as `N34` in the corpus register; do not re-report it. Inner-set membership is likewise the
+  *aim*, not the state: the set file says "carry, **or are meant to carry**" a workbook.
+  The T1/T2/T3 labels were *reused* on
+  2026-09-21 — an older note using them means a disjoint partition, not this nesting.
+  **Retired names, and using one is a finding:** "full set", "test set", "measurement set",
+  "baseline cohort", "target set", "the 104", "the 15".
+  *Caution: these files were renamed from `full_set` / `test_set` at 12:49 on 2026-09-21,
+  mid-session. The corpus moves on Dave's other machine without this repo hearing about it —
+  read the set files before quoting them, never this note.*
+
+- **`protocol_corpus/docs/issues.md` is the one register.** Open defects AND open decisions, one list.
+  Numbering: bare number = a GitHub issue in the named repo, `N`-prefix = local placeholder.
+  A finding this project makes about the corpus becomes a row there — not a local fix here,
+  and not a second register.
+
+- **`protocol_corpus/docs/plan.md` is gone** (deleted 2026-09-20), along with its `known_fixes`, `pipeline`,
+  `baseline_cohort`, `soa_curation_lessons` and `multi_design_protocols` documents. Content went to that repo's own `aims.md`, `programme.md`, `issues.md`, `next_steps.md`,
+  `measurement_plan.md` and `README.md`. **Any pointer in this project to `protocol_corpus/docs/plan.md` is dead.**
+
+- **`validated.soa_timelines` exists and is the reviewer's count of SCHEDULES, not printed
+  tables.** `{count, cci, by, date, note}` in `ground_truth.yaml`, set with
+  `scripts/set_soa_pages.py set <ID> <range> --timelines N`. Four headed tables that are one
+  schedule split into parts count as **1**. This did not exist when this project last looked, and
+  it is the single most useful new signal here: **13 of the protocols this project references now
+  carry a reviewer-confirmed timeline count**, so claims about how many schedules a protocol has
+  no longer have to be eyeballed. `validated.pages.<section>` likewise now overrides the
+  page-finder — the reviewer states the real range, and it drives the sub-extracts and the
+  vision drafters.
+
+- **PDF page numbers, never printed page numbers.** Corpus-wide convention: every page number
+  anywhere — `validated.pages`, notes, issue rows, conversation — is the PDF page (1-indexed
+  from the PDF's first page), not the number in the protocol's footer, which a cover sheet
+  commonly shifts. The `source/{ie,soa}.pdf` sub-extracts carry a generated title page, so
+  sub-extract page *k+1* is the *k*th page of the range. Translate before quoting.
+
+- **`protocol_corpus/docs/working/timeline_disagreements.md`** is the live sheet of reference-vs-extracted
+  timeline-count deltas. Relevant here: several early-phase protocols sit in it, and a
+  disagreement on one of ours is evidence about the SoA's structure, not just a pipeline defect.
+
+### Where this project's protocols now stand in the corpus
+
+Of the 42 NCT ids this project references (27 chosen + 12 SAD/MAD candidates + 2 rejected +
+NCT04457778, named only to record its exclusion):
+
+- **41 are in the corpus.** The exception is **NCT04805983** — reopened on 2026-09-21 but never
+  onboarded, so it has no PDF, no ground truth and no registry entry. Bringing it in is a
+  decision, not a formality.
+- **13 carry a reviewer-confirmed timeline count** and are in the frozen **measured set** (T2).
+- **2 carry a handcrafted USDM workbook**, and both — **NCT06085482** and **NCT05262387** — are
+  in the **inner set** (T1, 15 protocols). Those two are the only protocols here with
+  content ground truth, which makes them the right place to ground any USDM claim that needs
+  more than structure.
+
+## Session lessons — 2026-09-21
+
+The repo has no session log by design (`docs/status.md` was deleted this day; `CLAUDE.md` says
+why). These are the durable items from that session — the things that would change how the next
+one behaves. State is in `next_steps.md`; the destination is in `aims.md`.
+
+- **`sources/EMP Study.docx` is a SCOPING document, not evidence (Dave).** Notes plus SoA
+  screenshots, written to frame the problem at the start. **The issue it was written to raise is
+  monitoring timelines that span visits and days** — a measurement series running as its own
+  schedule across the study-day columns instead of sitting in one cell. That is issues 1 and 5 and
+  it is the centre of the question; the other four came out of chasing it. Consequence: strings
+  quoted from its *images* are scoping notes, and were never protocol evidence. Do not cite them
+  in the report as though they were.
+
+- **Re-quoting NCT05469126 is a vision read, not a lookup.** Checked on disk 2026-09-21: the
+  corpus ground truth holds **1 SoA table, 2 activities, 2 timepoints** — a stub —
+  `has_cci_redactions: true`, and **no `validated.pages.soa`** (the 11–19 range is the
+  page-finder's guess). The 74-page PDF yields ~5k characters of text; `source/soa.pdf` yields 206,
+  all of it the generated title page. The SoA pages are images of a partly redacted table, and
+  none of the strings the report quotes appear in any text layer. Anyone planning "just check the
+  PDF" should budget accordingly, and should write the reviewer's page range and timeline count
+  back with `set_soa_pages.py` so the read is reusable.
+
+- **`protocol_corpus` moves under this project mid-session.** Its set files were renamed
+  `full_set`/`test_set` → `measured_set`/`inner_set` at **12:49 on 2026-09-21**, between two reads
+  in the same session, from Dave's other machine. A note in this repo about the corpus is a
+  snapshot with a short life. **Read the corpus files; never quote this repo's notes about them.**
+
+- **Don't argue a scope boundary from facts the project has flagged as unusable.** `aims.md`
+  briefly justified its boundary with "n=104 running to Day 31" — where n=104 is a candidate not
+  yet read and "Day 31" comes from the transcription the project itself marks as not holding
+  together. A rule propped up by its own open questions is circular. Fixed the same day; worth
+  remembering because it read as perfectly reasonable when written.
+
+- **A completion test that nothing closes is unreachable.** `aims.md` originally said the project
+  was done when no issue failed the four tests — with nothing closing the issue *set*, so "done"
+  was reachable by declaring the list closed. There is now a closure rule (a pass over the SoA of
+  every chosen protocol turning up no new pattern) and a ranked item that performs it. Any future
+  completion test needs the same treatment: ask what makes the list stop growing.
+
+- **An exclusion with exceptions has to name them.** `lessons_learned` recorded NCT04234672,
+  NCT03907540 and NCT04965389 as OUT on the mass-balance boundary; Dave had moved all three IN on
+  2026-07-02 and the lesson was never annotated, so the two documents contradicted each other for
+  eleven weeks without anyone noticing. Annotate a reversal where the original rule sits.
+
+- **`search.py` → `scripts/search.py`** (2026-09-21), matching the sibling repos, with a module
+  docstring carrying what it does, how to run it, and why each filter is what it is. It is the
+  **candidate finder**; onboarding is `protocol_corpus/scripts/corpus.py` and nothing here writes
+  to the corpus. An earlier judgement in this session that the script was dead and should be
+  deleted was wrong on both counts — it defaults to `phase="1"`, so the "`phase:0` is a junk
+  filter" lesson never applied to it.
+
+- **The `review-focus` skill is now general**, over any repo carrying aims / next_steps /
+  lessons_learned, with per-repo specifics in `references/<repo>.md` (only `protocol_corpus` has
+  one). Two review passes over this repo on 2026-09-21 found ~25 real defects, most of them
+  introduced the same day by the session that was tidying it. **Running the review after an edit
+  session is worth more than running it before one.**

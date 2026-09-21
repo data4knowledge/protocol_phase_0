@@ -28,17 +28,32 @@ The report has three parts: Part 1 fixes the study type and terminology (see the
 note `docs/phase0_definition_and_terms.md`); Part 2 is the protocol set; Part 3 is the
 issue-by-issue characterisation and USDM assessment.
 
-> **Status: draft.** The five issues are characterised and grounded (Part 3). The USDM verdicts
-> are marked either **traced** (settled against DDF-RA in prior work, cited) or **open**
-> (needs a DDF-RA trace — the current next step). No USDM capability is asserted without a trace.
+> **Status: draft, and behind the project.** The five issues below are characterised and
+> grounded (Part 3), with USDM verdicts marked either **traced** (settled against DDF-RA in
+> prior work, cited) or **open** (needs a DDF-RA trace). No USDM capability is asserted without
+> a trace.
+>
+> **Two things are not yet in this document** (2026-09-21):
+>
+> 1. **No issue has been mapped to the twelve-pattern atlas.** The report is framed as the delta
+>    against that atlas, and the comparison has not been made. An issue that turns out to be an
+>    existing atlas pattern is not a delta and should leave.
+> 2. **Scope was expanded to SAD and MAD dose-escalation studies**, adding a sixth issue — the
+>    cohort / dose-level axis, sentinel dosing, escalation decision gates, and MAD repeat-dosing
+>    days. Written up in `docs/phase0_definition_and_terms.md` § 6, grounded in twelve
+>    ascending-dose protocols already in `protocol_corpus`, **not yet read and not yet traced**.
+>
+> Until both are done this report understates the question it is asking. Plan:
+> `docs/next_steps.md`.
 
 ## Part 1 · What these studies are
 
 A **Phase 0 / exploratory study** gives a sub-therapeutic exposure under a reduced preclinical
 package to gather early PK, PD, mechanistic or imaging data — not safety/efficacy, not
 therapeutic benefit. In practice the set used here is broader: **early-phase experimental
-medicine**, which includes conventional Phase 1 clin-pharm PK/DDI studies. Those turn out to
-be where the SoA representation issues are sharpest.
+medicine**, which includes conventional Phase 1 clin-pharm PK/DDI studies — where the
+cell-level SoA representation issues are sharpest — and, since 2026-09-21, **first-in-human
+dose-escalation studies (SAD and MAD)**, which bring a cohort structure the others do not.
 
 ClinicalTrials.gov has no "Phase 0" value — these register as **Early Phase 1**, and much
 pharma early-phase work is simply labelled Phase 1. Full definition, thresholds and
@@ -46,9 +61,10 @@ terminology: `docs/phase0_definition_and_terms.md`.
 
 ## Part 2 · The protocol set
 
-The corpus for the analysis is **26 protocols** sourced from ClinicalTrials.gov (real posted
-protocol documents only). The full chosen/rejected list, with sponsor, indication, SoA form
-and timing anchor, is `docs/project_protocols.md`. In shape it splits into:
+The corpus for the analysis is **27 protocols** sourced from ClinicalTrials.gov (real posted
+protocol documents only), plus **12 SAD / MAD candidates** brought into scope on 2026-09-21 and
+not yet read. The full list — chosen, candidates and rejected, with sponsor, indication, SoA
+form and timing anchor — is `docs/project_protocols.md`. In shape the 27 split into:
 
 - **Clin-pharm PK / DDI (Eli Lilly / Loxo)** — the four EMP protocols below; conventional
   crossover PK and drug-drug-interaction designs whose SoAs carry the cell-level structure
@@ -58,6 +74,12 @@ and timing anchor, is `docs/project_protocols.md`. In shape it splits into:
 - **Pharmacological- and infection-challenge** studies (LPS, endotoxin, alcohol, amphetamine,
   influenza) — assessments timed relative to a challenge administration.
 - **Imaging microdose** studies (fluorescence / optical probes).
+
+The twelve **SAD / MAD candidates** sit outside that split and are the evidence for issue 6.
+They were already onboarded in `protocol_corpus`, so no new search was needed; four carry a
+reviewer-confirmed timeline count. **Ten of the twelve are Eli Lilly**, on top of an already
+Lilly-heavy chosen list — a limitation that has to be fixed or stated before any issue-6
+finding is published.
 
 The four EMP protocols are the primary evidence set (from `sources/protocols.docx`), all Eli
 Lilly / Loxo Phase 1 healthy-volunteer PK/DDI:
@@ -97,6 +119,13 @@ assert until traced.*
 **What the SoA shows.** PK sampling timed in running hours relative to the dose, past 24:
 
 > `P, 0.5, 1, 2, 4, 6, 8, 12, 16` then `24 (D2), 36 (D2), 48 (D3) … 120 (D26), 168 (D28), 240 (D31)` — *"Times are relative to LY dosing"*
+
+**Unverified transcription.** This series was transcribed from a screenshot, not from the
+protocol, and it does not run continuously — `96 (D5)` followed by `120 (D26)` cannot both be
+measured from one dose. The likeliest reading is that two crossover periods have been merged,
+the later hours running from a second dose around Day 21. The *pattern* — running hours past 24,
+with the calendar day in parentheses — is what this issue is about and is not in doubt; the
+specific numbers are, and are being re-read from the protocol.
 
 Dave's note asks the tool to accept `24:00 hr, 36:00 hr, 48:00 hr …` — hours that keep
 counting rather than resetting to a day+clock.
