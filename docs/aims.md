@@ -34,14 +34,15 @@ sub-day units, rather than on a calendar of visits.** A protocol whose schedule 
 “Week 4, Week 8, Week 12” is out however small it is; one whose schedule reads
 “predose, 0.5 h, 1 h, 24 h” is in however large.
 
-Four families sit inside that boundary, all equally in:
+Five families sit inside that boundary, all equally in:
 
 1. **Clin-pharm PK / DDI** — crossover and drug-drug-interaction studies. Where
    the cell-level structure is sharpest.
 2. **PET receptor-occupancy / radioligand-tracer** studies, including microdose tracers.
 3. **Pharmacological- and infection-challenge** studies — LPS, endotoxin, alcohol,
    amphetamine, influenza, exercise.
-4. **Dose-escalation first-in-human — SAD and MAD.** Sequential ascending-dose
+4. **Imaging microdose** — fluorescence and optical probes.
+5. **Dose-escalation first-in-human — SAD and MAD.** Sequential ascending-dose
    cohorts in healthy volunteers, single-dose or repeat-dose.
 
 Strict Phase 0 / microdose is a *subset* of this, not the boundary. Neither drug chemistry
@@ -77,8 +78,8 @@ For **every** issue in the report, all four of these, or the issue is not finish
 | # | | |
 |---|---|---|
 | 1 | **Grounded** | evidenced in a named protocol's actual SoA — the PDF or the ground truth, never a one-line summary table |
-| 2 | **Mapped** | placed against the twelve-pattern atlas: existing pattern, partial, or absent |
-| 3 | **Traced** | the USDM verdict derived from DDF-RA — API, CT and CORE rules — with the class or rule id quoted |
+| 2 | **Mapped** | placed against the twelve-pattern atlas by name — which pattern, which footnote categories |
+| 3 | **Traced** | the USDM verdict taken from the SoA pattern atlas — the pattern the issue is, and the USDM mechanism (A–K) the atlas gives for that pattern |
 | 4 | **Stated** | carried into the report with its verdict and its basis |
 
 **And the issue list has to be closable, or “done” is unreachable by construction** — a new
@@ -92,9 +93,12 @@ of the four tests.
 
 ## Standing boundaries
 
-**No USDM claim without a trace.** Every statement about what USDM can or cannot
-represent is either traced against the model with the class or rule id quoted, or marked a
-guess in the text. An untraced "X is a gap" is the failure mode this rule exists to stop, and
+**Issues are traced against the SoA pattern atlas, and against nothing else (Dave,
+2026-09-21).** `protocol_soa_patterns/docs/reports/soa_patterns.html` is the reference: its
+twelve patterns, twenty-one footnote categories and eleven USDM mechanisms (A–K). An issue is
+traced when it is named against that vocabulary. This replaces tracing against DDF-RA, which
+was a working practice carried forward from June, not a decision. Every statement about what
+USDM can or cannot represent is either traced that way or marked a guess in the text. An untraced "X is a gap" is the failure mode this rule exists to stop, and
 the project's record on it is bad — every such claim made so far has had to be retracted.
 `lessons_learned.md` keeps the list.
 

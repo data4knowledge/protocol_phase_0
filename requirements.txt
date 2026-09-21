@@ -1,0 +1,8 @@
+# protocol_phase_0
+#
+# scripts/build_report.py   — reads docs/report_source.yaml
+# report_theme/build.py     — markdown -> themed HTML
+# scripts/search.py         — ClinicalTrials.gov API v2 candidate finder
+pyyaml
+markdown
+requests

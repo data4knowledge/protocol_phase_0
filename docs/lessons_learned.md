@@ -4,8 +4,37 @@ Decisions and knowledge we don't want to lose. Append on new decisions/facts; re
 
 ## Project scope & architecture
 
-- **Scope EXPANDED (Dave, 2026-09-21) — SAD and MAD are IN.** Single and Multiple Ascending Dose studies join the existing early-phase / experimental-medicine definition. **This reverses a recorded exclusion** — "conventional Phase 1 SAD/MAD" was listed under *Exclude* in this file, and NCT04805983 was rejected in `project_protocols.md` for being "SAD-like". Both reversed; the old lines are annotated in place, not deleted. **Why it is worth it:** not more evidence for the existing five issues, but a sixth structure they do not exercise — the **cohort / dose-level axis** (one printed SoA instantiated per ascending cohort), **sentinel dosing** (a within-cohort split with its own offset), **escalation decision gates** (cohort *n+1* conditional on the safety review of cohort *n*), and **MAD repeat-dosing days** (intensive PK on first and last dosing day, middle days collapsed into a spanning cell). Written up as issue 6 in `phase0_definition_and_terms.md`. **The USDM verdict on issue 6 is OPEN — not traced, do not assert it.** **Oncology dose escalation stays out** (escalates in patients against response, cycle-based — a Phase 2/3 shape). **Evidence needed no new search:** twelve in-scope ascending-dose protocols are already onboarded in `protocol_corpus`, listed in `project_protocols.md`; four carry a reviewer-confirmed timeline count. **Known weakness: ten of the twelve are Eli Lilly**, on top of an already Lilly-heavy chosen list — the set needs non-Lilly SAD/MAD before any issue-6 finding is publishable, or it reads as one sponsor's house style.
-- **Scope REFRAMED (Dave, 2026-07-02) — still the same project, was loosely specified.** The real deliverable is the **USDM delta for concrete SoA-representation patterns**, evidenced by four Lilly/Loxo Phase-1 clin-pharm protocols (`sources/protocols.docx`) + a problem statement (`sources/EMP Study.docx`). The five patterns: (1) interval activities crossing day boundaries (8h urine bins), (2) dose-relative extended-hour timing (24–240h), (3) predose "P" per-cell marker, (4) footnote-encoded semantics (windows, repeats, conditionals, ordering), (5) parallel timeline starting pre-dose. **This reopens the earlier "no USDM delta" conclusion** — that was reached on too narrow a framing (challenge-anchor + narrative round-trip only). The single-day-archetype boundary is NO LONGER the frame; do not exclude these four for being conventional clin-pharm DDI/PK.
+- **Issues are traced against the SoA pattern atlas, and nothing else (Dave, 2026-09-21).**
+  `protocol_soa_patterns/docs/reports/soa_patterns.html` is the reference: **12 patterns**
+  (`normal`, `pk_profile`, `cycles`, `extension_period`, `subsidiary_tables`, `multi_track`,
+  `heavy_footnoting`, `conditional_branches`, `ae_row`, `unscheduled_visits`,
+  `early_termination`, `decentralised`), **21 footnote categories**, and **11 USDM mechanisms
+  A–K**. An issue is traced when it is named against that vocabulary — which pattern it is, and
+  which mechanism the atlas gives for it. **Mapping and tracing are therefore one job, not two.**
+  *This replaces tracing against DDF-RA.* That was never a decision: it was how the 2026-06-25
+  session happened to answer two questions, `lessons_learned` recorded it with "Dave to
+  validate", `next_steps` carried it forward as an instruction, and on 2026-09-21 I promoted it
+  into `aims.md` and then into a hard build check without asking. The June DDF-RA answers below
+  stay as history; they are not the standard. **Consequence, recorded honestly:** issues 2, 3 and
+  5 had been marked "traced" on DDF-RA reasoning, and under the atlas standard none of the six is
+  traced. The vocabulary is copied into `docs/report_source.yaml` and `scripts/build_report.py`
+  rejects a name that is not in it.
+
+- **Scope NARROWED (Dave, 2026-09-21) — three protocols removed from the target set.**
+  **NCT02901925** (no SoA at all, reviewer-confirmed 0 timelines), **NCT03861000** (visits only,
+  no grid) and **NCT04057807** (narrative plus visits) are out of the analysis. All three fail the
+  boundary in `aims.md`: their timing hangs off visit days or off nothing, not off an intervention
+  in sub-day units. Chosen goes **27 → 24**; the 36 active protocols are those 24 plus the 12
+  SAD/MAD candidates. **They stay in `protocol_corpus`** — rejection here is a judgement about
+  this analysis, never about the corpus. Two findings made on them survive and are kept: the
+  NCT03861000 "Table 5" result (participant time commitment is derivable, not a USDM gap) and the
+  observation that roughly half the early-phase population carries no SoA grid at all. **Note what
+  this costs:** the set no longer contains a documented specimen of schedule *absence*, so if the
+  report wants to say anything about narrative-only protocols it must say where the evidence came
+  from.
+
+- **Scope EXPANDED (Dave, 2026-09-21) — SAD and MAD are IN.** Single and Multiple Ascending Dose studies join the existing early-phase / experimental-medicine definition. **This reverses a recorded exclusion** — "conventional Phase 1 SAD/MAD" was listed under *Exclude* in this file, and NCT04805983 was rejected in `project_protocols.md` for being "SAD-like". Both reversed; the old lines are annotated in place, not deleted. **Why it is worth it:** not more evidence for the existing five issues, but a sixth structure they do not exercise — the **cohort / dose-level axis** (one printed SoA instantiated per ascending cohort), **sentinel dosing** (a within-cohort split with its own offset), **escalation decision gates** (cohort *n+1* conditional on the safety review of cohort *n*), and **MAD repeat-dosing days** (intensive PK on first and last dosing day, middle days collapsed into a spanning cell). Written up as issue 6 in `phase0_definition_and_terms.md`. **The USDM verdict on issue 6 is OPEN — not traced, do not assert it.** **Oncology dose escalation stays out** (escalates in patients against response, cycle-based — a Phase 2/3 shape). **Evidence needed no new search:** twelve in-scope ascending-dose protocols were already onboarded in `protocol_corpus`; four carry a reviewer-confirmed timeline count. **Folded into the chosen list on 2026-09-21 (Dave)**, taking it to 36. **Known weakness: ten of the twelve are Eli Lilly**, on top of an already Lilly-heavy chosen list — the set needs non-Lilly SAD/MAD before any issue-6 finding is publishable, or it reads as one sponsor's house style.
+- **Scope REFRAMED (Dave, 2026-07-02) — still the same project, was loosely specified.** The real deliverable is the **USDM delta for concrete SoA-representation patterns**, evidenced by four Lilly/Loxo Phase-1 clin-pharm protocols — NCT05469126, NCT05176314, NCT06085482, NCT05444556 — plus a scoping document (`sources/EMP Study.docx`). *(`sources/protocols.docx` named those four and is no longer in `sources/`; ids inlined 2026-09-21 so the reference stops dangling.)*. The five patterns: (1) interval activities crossing day boundaries (8h urine bins), (2) dose-relative extended-hour timing (24–240h), (3) predose "P" per-cell marker, (4) footnote-encoded semantics (windows, repeats, conditionals, ordering), (5) parallel timeline starting pre-dose. **This reopens the earlier "no USDM delta" conclusion** — that was reached on too narrow a framing (challenge-anchor + narrative round-trip only). The single-day-archetype boundary is NO LONGER the frame; do not exclude these four for being conventional clin-pharm DDI/PK.
 - **Project purpose (original, locked 2026-06-25 — superseded by the 2026-07-02 reframe above):** characterise one under-represented trial type — single-day "experimental medicine" / Phase 0 studies — and find the specific issues their SoAs raise for USDM, vs the existing 12-pattern atlas. The general SoA→USDM mapping is already done elsewhere; this project only finds the **Phase-0 delta**.
 - **Two layers, kept separate:** `protocol_corpus` is general purpose — any study with a posted protocol PDF, **sourced only from ClinicalTrials.gov**, no Phase 0 filter. This project (`protocol_phase_0`) pulls a Phase 0 subset by our definition.
 - **The real target is SoA shape, not drug chemistry.** Microdose/PK is a well-defined subset, not the boundary. The archetype (from Dave): "Phase 0 / early phase / experimental medicine", often single-day, small population, many such trials run.
@@ -187,13 +216,13 @@ against the repo on 2026-09-21, not read off its documents.
 
 ### Where this project's protocols now stand in the corpus
 
-Of the 42 NCT ids this project references (27 chosen + 12 SAD/MAD candidates + 2 rejected +
-NCT04457778, named only to record its exclusion):
+The file names 42 NCT ids: **36 chosen + 6 rejected**. Of the 36 chosen:
 
-- **41 are in the corpus.** The exception is **NCT04805983** — reopened on 2026-09-21 but never
-  onboarded, so it has no PDF, no ground truth and no registry entry. Bringing it in is a
-  decision, not a formality.
-- **13 carry a reviewer-confirmed timeline count** and are in the frozen **measured set** (T2).
+- **All 36 are in the corpus.** Across the whole file only **NCT04805983** is not — reopened on
+  2026-09-21 but never onboarded, so it has no PDF, no ground truth and no registry entry, and it
+  sits in the rejected list. Bringing it in is a decision, not a formality.
+- **12 carry a reviewer-confirmed timeline count** and are in the frozen **measured set** (T2).
+  (It was 13 until NCT02901925 left the target set on 2026-09-21.)
 - **2 carry a handcrafted USDM workbook**, and both — **NCT06085482** and **NCT05262387** — are
   in the **inner set** (T1, 15 protocols). Those two are the only protocols here with
   content ground truth, which makes them the right place to ground any USDM claim that needs
@@ -201,9 +230,13 @@ NCT04457778, named only to record its exclusion):
 
 ## Session lessons — 2026-09-21
 
-The repo has no session log by design (`docs/status.md` was deleted this day; `CLAUDE.md` says
-why). These are the durable items from that session — the things that would change how the next
-one behaves. State is in `next_steps.md`; the destination is in `aims.md`.
+The repo has no session log by design (the dated action log, formerly `status.md` under `docs/`,
+was deleted this day; `CLAUDE.md` says why). These are the durable items — what would change how
+the next session behaves. State is in `next_steps.md`; the destination is in `aims.md`.
+
+**Sibling repos touched:** `protocol_corpus` and `protocol_soa_patterns`, both **read only** —
+nothing was written to either. The only outstanding item owed to a sibling is a register row for
+NCT06390098 in `protocol_corpus/docs/issues.md`.
 
 - **`sources/EMP Study.docx` is a SCOPING document, not evidence (Dave).** Notes plus SoA
   screenshots, written to frame the problem at the start. **The issue it was written to raise is
@@ -213,14 +246,29 @@ one behaves. State is in `next_steps.md`; the destination is in `aims.md`.
   quoted from its *images* are scoping notes, and were never protocol evidence. Do not cite them
   in the report as though they were.
 
-- **Re-quoting NCT05469126 is a vision read, not a lookup.** Checked on disk 2026-09-21: the
-  corpus ground truth holds **1 SoA table, 2 activities, 2 timepoints** — a stub —
-  `has_cci_redactions: true`, and **no `validated.pages.soa`** (the 11–19 range is the
-  page-finder's guess). The 74-page PDF yields ~5k characters of text; `source/soa.pdf` yields 206,
-  all of it the generated title page. The SoA pages are images of a partly redacted table, and
-  none of the strings the report quotes appear in any text layer. Anyone planning "just check the
-  PDF" should budget accordingly, and should write the reviewer's page range and timeline count
-  back with `set_soa_pages.py` so the read is reusable.
+- **NCT05469126's ground truth carries the evidence — and a counting bug nearly cost a day.**
+  Its extracted SoA holds **18 activities, 12 timepoints and 11 conditions**, and the conditions
+  carry the real footnote text, including the full PK series for both crossover periods. Issues 2,
+  3 and 5 were re-quoted straight from it. **Earlier the same day I recorded it as "1 table, 2
+  activities, 2 timepoints — a stub", labelled "checked, not assumed", in two documents, and
+  built a plan around budgeting for a vision read.** The cause: `activities` is
+  `{found: bool, items: [...]}`, and I called `len()` on the dict, which is 2. **Count
+  `[...]['items']`, never the wrapper** — the shape is in
+  `protocol_corpus/docs/spec/ground_truth_shape.md`, and a suspiciously round "2 activities, 2
+  timepoints" should have been the tell.
+
+- **The issue-2 series is two crossover periods, not one — settled from the ground truth.**
+  Period 1 doses Day 1 (`P … 96 (D5)`), Period 2 doses Day 21 (`P … 120 (D26), 168 (D28),
+  240 (D31)`), each restarting the clock. The screenshot transcription had merged them, which is
+  why `96 (D5)` appeared to sit beside `120 (D26)`. The *pattern* the issue claims — running
+  hours past 24 with the calendar day in parentheses — was right throughout.
+
+- **Issues 1 and 4's evidence is not in NCT05469126.** No urine collection among its eighteen
+  activities; none of "± 1.5 hours", "triplicate", "until resolution" or the ECG/vitals/bloods
+  ordering among its eleven footnotes. Either the scoping screenshots are of a different protocol,
+  or the extractor missed them — the first makes the report's attribution wrong, the second makes
+  it a corpus defect. **Unresolved, and these are the two issues most likely to be the real
+  delta.** Ranked first in `next_steps.md`.
 
 - **`protocol_corpus` moves under this project mid-session.** Its set files were renamed
   `full_set`/`test_set` → `measured_set`/`inner_set` at **12:49 on 2026-09-21**, between two reads
@@ -256,3 +304,25 @@ one behaves. State is in `next_steps.md`; the destination is in `aims.md`.
   one). Two review passes over this repo on 2026-09-21 found ~25 real defects, most of them
   introduced the same day by the session that was tidying it. **Running the review after an edit
   session is worth more than running it before one.**
+
+- **The report is generated now, and that is the structural change of the day.**
+  `docs/report_source.yaml` holds the prose, evidence, atlas placements and verdicts;
+  `scripts/build_report.py` parses the protocol set out of `docs/project_protocols.md` and
+  assembles `docs/report/early_phase_soas.md`, then chains to `report_theme/build.py`.
+  **The markdown is overwritten — never hand-edit it.** Six conditions fail the build, the useful
+  two being a `traced` verdict with no atlas mechanism, and any atlas name outside the vocabulary.
+  Every count in the report is computed. It exists because the hand-typed version drifted: 26 vs
+  27 protocols, one footnote quoted two ways in two files, three issues marked traced citing
+  nothing.
+
+- **`search.py` → `scripts/search.py`, and `requirements.txt` added** (pyyaml, markdown,
+  requests). An earlier judgement in this session that `search.py` was dead and should be deleted
+  was wrong twice over — it defaults to `phase="1"`, so the "`phase:0` is a junk filter" lesson
+  never applied to it, and it is the only candidate-finding tool the project has.
+
+- **Run the review after an edit session, not before one.** Three review passes over this repo on
+  2026-09-21 found roughly thirty-five real defects, and the large majority were introduced the
+  same day by the sessions that were tidying it — including the NCT05469126 counting bug above,
+  which was recorded in two documents as a verified fact and drove the ranked next step for
+  several hours. A reviewer that only reads what a session wrote about itself finds nothing.
+

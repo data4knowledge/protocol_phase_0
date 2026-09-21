@@ -11,60 +11,60 @@ version stacked four historical plans on top of each other; none is reproduced h
 Six issues are named and grounded (`docs/phase0_definition_and_terms.md`). Against the four
 completion tests in `aims.md`:
 
-| Issue | Grounded | Mapped to atlas | Traced vs DDF-RA | In report |
+| Issue | Grounded | Mapped to atlas | USDM mechanism from atlas | In report |
 |---|---|---|---|---|
-| 1 — interval / duration activities | yes | **no** | **no** | yes, marked open |
-| 2 — dose-relative extended hours | yes | **no** | yes | yes |
-| 3 — "P" predose anchor | yes | **no** | yes | yes |
-| 4 — footnote-encoded semantics | yes | **no** | **no** | yes, marked open |
-| 5 — parallel pre-dose timeline | yes | **no** | yes | yes |
-| 6 — dose-escalation cohorts | yes | **no** | **no** | **no** |
+| 1 — interval / duration activities | **no** | **no** | **no** | yes, marked open |
+| 2 — dose-relative extended hours | yes | **no** | **no** | yes |
+| 3 — "P" predose anchor | yes | **no** | **no** | yes |
+| 4 — footnote-encoded semantics | **no** | **no** | **no** | yes, marked open |
+| 5 — parallel pre-dose timeline | yes | **no** | **no** | yes |
+| 6 — dose-escalation cohorts | **no** | **no** | **no** | **no** |
 
-**Nothing is mapped to the twelve-pattern atlas.** That column has been empty since the project
-started, and the report is framed as the delta against that atlas. It is the largest gap — larger
-than the DDF-RA trace.
+**Nothing is mapped to the twelve-pattern atlas, which is now the only thing issues are traced
+against** (Dave, 2026-09-21 — DDF-RA is out). Mapping and tracing are therefore one job: name
+the pattern, take the USDM mechanism the atlas gives for it. That column has been empty since the
+project started, and the report is framed as the delta against that atlas.
 
-The report (`docs/report/early_phase_soas.md`) carries the corrected 27-protocol count, a status
-block naming the two gaps, and a Part-2 paragraph on the twelve SAD/MAD candidates. **Part 3 still
-characterises five issues** — issue 6 is not written up there, and the summary still says "the five
-issues below". Its version line reads v0.1.0 / 2 July, which no longer matches its content.
+The report is **generated** from `docs/report_source.yaml` by `scripts/build_report.py`; the
+markdown is overwritten and must not be hand-edited. The build prints the table above from the
+source and refuses to print a traced verdict that names no atlas mechanism.
 
 ## The one thing to do next
 
-**Re-quote issues 1–5 from NCT05469126's actual SoA — and expect it to be work, not a lookup.**
+**Settle where issues 1 and 4's evidence actually comes from.**
 
-`sources/EMP Study.docx` is a scoping document. Several strings in
-`phase0_definition_and_terms.md` and in the report were transcribed off its screenshots. Fine for
-scoping; not fine as the evidence in a published report, and one of them does not hold together —
-the issue-2 series reads `96 (D5)` then `120 (D26)`, which cannot both be measured from one dose.
+Issues 2, 3 and 5 are now quoted from NCT05469126's extracted SoA in `protocol_corpus`
+(`unvalidated.content.soa[0].conditions`), which carries the real footnote text — eighteen
+activities, twelve timepoints, eleven conditions. No vision read was needed; the earlier note in
+this file claiming a two-row stub was a counting error and is retracted.
 
-**What is actually in the corpus for NCT05469126** (checked 2026-09-21, not assumed):
+That read also **closed the issue-2 puzzle**. The series is two crossover periods, not one:
+Period 1 doses Day 1, Period 2 doses Day 21, each restarting the clock, which is why `96 (D5)`
+could sit beside `120 (D26)`. The pattern was right; the transcription had merged them.
 
-| | |
-|---|---|
-| ground truth | **1 SoA table, 2 activities, 2 timepoints** — a stub |
-| `has_cci_redactions` | **true** |
-| `validated.pages.soa` | **absent** — the 11–19 range is the page-finder's guess, not a reviewer's |
-| text layer | the 74-page PDF yields ~5k characters; `source/soa.pdf` yields 206, all title page |
+**What it opened is worse.** Issue 1's urine bins and all four of issue 4's footnotes
+(± 1.5 hours, triplicate, "until resolution", the ECG/vitals/bloods ordering) **do not appear in
+NCT05469126's extracted SoA at all** — it has no urine collection among its eighteen activities,
+and its eleven footnotes are different ones. Two explanations, and they lead different places:
 
-So the SoA pages are **images of a partly redacted table**, and none of the strings the report
-quotes appear in any text layer. This is a vision read plus a human check, not a grep. Budget for
-it accordingly, and finish by writing the reviewer's page range and timeline count back into the
-corpus with `set_soa_pages.py` — that is the corpus's job and it makes the read reusable.
+1. **The screenshots are of another protocol.** `status.md` recorded image2/3 as GZGM, but that
+   was itself a note. Then issues 1 and 4 are attributed to the wrong protocol in the report.
+2. **The extractor missed them.** Then it is a corpus finding and belongs in that register, and
+   the protocol PDF has to be opened after all.
 
-Give particular attention to the monitoring series that span visits and days — issues 1 and 5,
-and the reason the project exists. Where CCI redaction removes a value, the structure is still
-quotable and the number is not; say which.
+Open the PDF for the SoA pages and settle which. These are the two issues most likely to be the
+genuine delta, so their attribution is not a detail.
 
 ## Then, in order
 
 2. **Map the six issues to the twelve-pattern atlas.** Mount `protocol_soa_patterns`, read
    `protocol_soa_patterns/docs/reports/soa_patterns.html`, and put each issue in one of three
-   boxes: existing pattern, partial match, or absent. The column has been empty since the project
-   began and the report is framed as the delta against that atlas. Do it before the DDF-RA trace —
-   tracing an issue the atlas already covers is wasted work.
+   name: which of the twelve patterns it is, which of the twenty-one footnote categories it uses,
+   and the USDM mechanism (A–K) the atlas gives for those. That is the whole trace — there is no
+   second step against DDF-RA. An issue that turns out to be an existing pattern is not a delta
+   and should leave the report.
 
-3. **Read the SAD/MAD SoAs and settle issue 6.** The twelve candidates are in
+3. **Read the SAD/MAD SoAs and settle issue 6.** Twelve of the 36 in
    `docs/project_protocols.md`. Start with **NCT04586920** (SAD + MAD + DDI + food effect,
    n=104, reviewer count **6 timelines** — the richest) and **NCT04178733** (plain SAD, 2
    timelines — the simplest). *Note on NCT04586920: its `compare.yaml` reads `reference: 0,
@@ -74,71 +74,48 @@ quotable and the number is not; say which.
    issue 6's four parts: the cohort axis, sentinel dosing, the escalation gate, MAD
    repeat-dosing days. Promote what survives; delete what does not.
 
-4. **Trace issues 1, 4 and 6 against DDF-RA.** Mount `DDF-RA`; trace against
-   `Deliverables/API/USDM_API.json`, `CT/USDM_CT.xlsx`, `RULES/USDM_CORE_Rules.xlsx` (v4.0).
-   Quote the class or rule id. **No verdict without one.**
-   - **Issue 1** — is a collection *interval* first-class (activity duration, or paired
-     bounding timings), distinct from a ± scheduling window? The long-standing candidate for
-     the one genuine delta.
-   - **Issue 4** — repeat counts (triplicate), conditional repeats ("repeat daily until
-     resolution"), ordering among co-timed activities.
-   - **Issue 6** — does the cohort/dose-level axis ride on arms / elements / study cells with
-     one timeline, or does each dose level need its own `ScheduleTimeline`? Where does the
-     escalation gate live?
+4. **Resolve what the atlas does not cover.** After step 2, whatever has no pattern, no footnote
+   category or no mechanism is the delta — and that, not a rule id, is the report's finding.
+   Expect it to be narrow: `pk_profile` probably takes issue 2, `heavy_footnoting` plus
+   `window_tolerance` / `conditional_branch` / `sample_ordering` probably take most of issue 4.
+   The likely residue is issue 1's interval-with-an-end, a repeat-count category the atlas has
+   no name for, and issue 6's cohort axis against `multi_track` — the rarest pattern in the scan
+   at 1.0%, so thin coverage there is expected.
 
-5. **Fix the sponsor concentration.** Ten of the twelve SAD/MAD candidates are Eli Lilly, on an
-   already Lilly-heavy list. **Use `scripts/search.py`** — that is what it is for. Swap its
+5. **Fix the sponsor concentration.** Ten of the twelve ascending-dose entries are Eli Lilly, on
+   an already Lilly-heavy list — and they are now in the chosen list, so the skew is the set's,
+   not a candidate pool's. **Use `scripts/search.py`** — that is what it is for. Swap its
    `DEFAULT_KEYWORDS` for the ascending-dose set ("single ascending dose", "multiple ascending
    dose", "first in human"), keep `phase="1"`, `funder="industry"` and `docs:prot`, and run it;
    it pages the full result set and writes a CSV. Onboard what it finds through
    `protocol_corpus/scripts/corpus.py`. Failing that, state the limitation in the report. Do not publish an issue-6 finding that is
    really one sponsor's template.
 
-6. **Rewrite the report.** Six issues in Part 3, each with its atlas box and its traced verdict;
-   bump the version and date off v0.1.0 / 2 July; add **NCT05262387** as the worked example for the *interaction* of issues
+6. **Finish the report.** The structure is generated now, so this is filling the source, not
+   rewriting prose: each issue's `atlas.patterns` / `atlas.footnotes` and a `trace` with real `refs`. The build will not
+   print a traced verdict without them. Bump `meta.version`; add **NCT05262387** as the worked example for the *interaction* of issues
    1/2/4/5 — its assessment-day sub-timeline shows all four at once, and it is one of only two
-   protocols here carrying a handcrafted USDM workbook. Then
-   `python3 report_theme/build.py docs/report/early_phase_soas.md`.
+   protocols here carrying a handcrafted USDM workbook. Edit `docs/report_source.yaml`, never the markdown, then
+   `python3 scripts/build_report.py`.
 
 7. **Make the closure pass.** `aims.md` says the issue list is closed only when a pass over the
    SoA of every protocol in the chosen list turns up no timing or repetition pattern not already
-   on the list. Nothing above is that pass — step 3 reads the twelve candidates only. Until it is
+   on the list. Nothing above is that pass — step 1 reads one protocol, step 3 reads twelve. Until it is
    made the list stays open and the project cannot be done, so it belongs here rather than being
    assumed. Protocols with no SoA are recorded as "no SoA", not skipped.
 
-## Drop candidates — your call
-
-- **`docs/report/early_phase_soas.pdf`** — 2026-07-06, two revisions behind, and nothing in the
-  repo produces it (`report_theme/build.py` emits HTML only). Regenerable-looking but not
-  regenerable. Delete.
-
 ## Open decisions
 
-- **Three chosen protocols sit outside the scope boundary `aims.md` states.** The boundary is
-  intervention-anchored, sub-day relative timing. **NCT02901925** has no SoA at all
-  (reviewer-confirmed 0 timelines), **NCT03861000** is visits-only, **NCT04057807** is narrative
-  plus visits. Either the boundary is drawn wrong or those three do not belong in the chosen list.
-  They may be worth keeping as the specimens of *absence* — that is an argument, not a decision.
-  Yours to settle; do not quietly widen the boundary to fit them.
 - **NCT04805983** (Yale, BMS-984923) — rejected in 2026-07 for being "SAD-like", which is no
   longer a reason. Never onboarded, so it is not in `protocol_corpus` at all. Onboard it, or
   leave it rejected on some other ground? Undecided.
-- **The 17-protocol pharma Phase 1 set** (2026-06-29) — never folded in or ruled out. Its SAD
-  members are no longer out of scope by class. Fold or drop.
+- **The 17-protocol pharma Phase 1 set** (2026-06-29) — never folded in or ruled out, and **the
+  list of ids exists nowhere in this repo**, so the decision cannot be taken from what is here.
+  It came from a `search.py` run whose CSV was deleted. Either re-run the search and name them,
+  or close the decision. Leaving it open costs more than either.
 
-## Carried loose ends — corpus-side, not this project's to fix
+## Carried loose ends — one left
 
-These belong in `protocol_corpus/docs/issues.md` if they still matter. **Check there before
-re-reporting any of them.** All three notes predate `scripts/corpus.py` and the
-`validated.pages` override, so the recorded commands are likely wrong now.
-
-- **NCT03733990 — CLOSED here.** A reviewer has since stated `validated.pages.soa` = 20–32 and
-  three tables are drafted, so the page-finder gap this project recorded is fixed. It is *also*
-  row **N32** in the corpus register, but for a different defect — no timepoint spine, no
-  reviewer count — which is still open there and is not ours.
-- **Temp pids files — CLOSED.** `phase1_pids.txt` and friends are gone from the corpus root. The
-  five `2026-09-*_ids.txt` files there now are a later session's and unrelated.
-- **NCT06390098 — still open**, and it is the only one. No `validated.pages.soa`; its single
-  drafted "Schedule of Activities" is near-empty off pages 44–53. **It has no row in the corpus
-  register** — raise one there, then delete this section. This project's own rule is that corpus
-  defects live in the corpus register, not in a second list here.
+**NCT06390098** still has no `validated.pages.soa` in `protocol_corpus` and its single drafted
+"Schedule of Activities" is near-empty off pages 44–53. It has **no row in the corpus register**.
+Raise one there; it is not this project's to fix. NCT03733990 and the temp pids files are closed.

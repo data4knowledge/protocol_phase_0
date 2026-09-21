@@ -118,14 +118,14 @@ narrative and in footnotes. Four things come with it:
   one spanning "daily" cell — issue 1's merged-cell problem, driven by repetition rather
   than by an interval.
 
-**Evidence already in hand.** Twelve in-scope ascending-dose protocols are already onboarded in
-`protocol_corpus` (listed in `docs/project_protocols.md`). Four carry a reviewer-confirmed
+**Evidence already in hand.** Twelve ascending-dose protocols, already onboarded in
+`protocol_corpus` and folded into the chosen list on 2026-09-21. Four carry a reviewer-confirmed
 timeline count; **NCT04586920** (SAD + MAD, n=104) is counted at **6 timelines**, the highest
 in the set. What drives that count is not yet established — it needs reading, not assuming.
 
-**Open question, not a claim.** Does USDM carry the cohort dimension through arms / elements /
-study-cell structure with one timeline, or does each dose level need its own `ScheduleTimeline`?
-And where does the escalation gate live? Neither is traced. Do not state either way until it is.
+**Open question, not a claim.** Is this the atlas's `multi_track` pattern, or something it has
+no pattern for? `multi_track` is the rarest in the 169-protocol scan at 1.0%, so thin coverage is
+likely. Not placed, not traced — do not state either way until it is.
 
 ### Why these are the target
 
@@ -133,7 +133,7 @@ Each is a demand on how the SoA *model* stores timing and repetition, not on the
 the cases the general 12-pattern atlas (`protocol_soa_patterns`) is thin on, because that
 scan is light on short, dosing-anchored, footnote-heavy early-phase tables. Whether USDM
 carries each cleanly is assessed in the report (`docs/report/early_phase_soas.md`) — traced
-against DDF-RA, not asserted.
+against the SoA pattern atlas, not asserted.
 
 ---
 

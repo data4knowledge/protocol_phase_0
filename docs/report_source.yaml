@@ -1,0 +1,352 @@
+# Source for docs/report/early_phase_soas.md.
+#
+# The report is GENERATED from this file by scripts/build_report.py. Edit here,
+# never the markdown — the markdown is overwritten on every build.
+#
+# The protocol set is NOT here: it is read from docs/project_protocols.md, which
+# is its source of truth. Two copies of a list are two lists.
+#
+# What the build enforces, from docs/aims.md:
+#   trace.status: traced   requires trace.refs, and every ref must be a real
+#                          atlas mechanism (A-K)          -> build fails otherwise
+#   atlas.patterns / atlas.footnotes must be real atlas ids -> build fails otherwise
+#   an issue with both lists empty counts as not placed. There is no 'box' key.
+#   evidence verified: false                    -> prints an Unverified callout
+
+# The controlled vocabulary of protocol_soa_patterns/docs/reports/soa_patterns.html.
+# This is the ONLY thing issues are traced against. Copied from that report; if it
+# changes there, change it here and the build will catch anything left behind.
+atlas:
+  patterns:
+    - normal                  # linear schedule
+    - pk_profile              # dense PK sampling
+    - cycles                  # repeating treatment cycles
+    - extension_period        # long-term follow-up
+    - subsidiary_tables       # side schedules
+    - multi_track             # parallel arms with different schedules
+    - heavy_footnoting        # dense conditions in narrative
+    - conditional_branches    # activities only under stated conditions
+    - ae_row                  # adverse-event collection on the schedule
+    - unscheduled_visits      # visits outside the planned grid
+    - early_termination       # exit-visit assessments
+    - decentralised           # activities outside the clinic
+  footnotes:
+    - cross_reference
+    - embedded_sub_schedule
+    - discretionary
+    - conditional_branch
+    - population_restriction
+    - state_preparation
+    - visit_encounter_definition
+    - procedure_detail
+    - process_governance
+    - activity_variant
+    - window_tolerance
+    - logistics_performer
+    - decentralised_home
+    - ae_collection_rule
+    - sample_ordering
+    - discontinuation_followup
+    - dosing_administration
+    - legend_definition
+    - eligibility_requirement
+    - randomisation_stratification
+    - dose_modification
+  mechanisms:
+    A: Main timeline structure
+    B: Sub-timeline at Activity (From Activity Type)
+    C: Sub-timeline at SAI (From Timepoint Type)
+    D: Asynchronous timelines (Asynchronous Condition Type)
+    E: Decisions and branching
+    F: Cycles (decision-as-loop)
+    G: Timing windows
+    H: Encounter modality
+    I: Condition class
+    J: Biomedical Concept linkage
+    K: StudyEpoch + StudyArm
+
+meta:
+  title: Early Phase SoAs
+  title_long: Early Phase SoAs — Representation Issues for USDM
+  subtitle: Early-phase Schedules of Activities, and the representation issues they raise for USDM.
+  kicker: protocol_phase_0 · report
+  footer: Early Phase SoAs · v0.1.0
+  version: 0.1.0
+  date: 21st September 2026
+
+summary: |
+  Early-phase / experimental-medicine studies — clin-pharm PK and DDI work, PET occupancy,
+  challenge models, and first-in-human dose escalation — produce Schedules of Activities whose
+  *cells* carry timing structure that a plain activity×timepoint grid cannot hold. This report
+  catalogues those representation issues and asks, for each, whether the CDISC Unified Study
+  Definitions Model (USDM) can carry it.
+
+  The question it came from, and still the centre of it: **monitoring timelines that span visits
+  and days** — a measurement series running as its own schedule across the study-day columns
+  instead of sitting in one cell.
+
+  It is a companion to the general [SoA and Footnote Patterns report](../../../protocol_soa_patterns/docs/reports/soa_patterns.html),
+  which catalogued twelve SoA patterns over 169 protocols with a populated SoA, and twenty-one
+  footnote categories over 1,759 footnotes in 147 of them, and concluded USDM carries them all. That scan is thin on exactly this population, so this
+  report works the delta.
+
+part1: |
+  A **Phase 0 / exploratory study** gives a sub-therapeutic exposure under a reduced preclinical
+  package to gather early PK, PD, mechanistic or imaging data — not safety or efficacy, and not
+  therapeutic benefit. The set used here is broader: **early-phase experimental medicine**.
+
+  The operative boundary is not size or duration. It is that **the SoA is anchored on an
+  intervention and timed relative to it in sub-day units, rather than on a calendar of visits.**
+  A schedule reading "Week 4, Week 8, Week 12" is out however small the study; one reading
+  "predose, 0.5 h, 1 h, 24 h" is in however large.
+
+  ClinicalTrials.gov has no "Phase 0" value — these register as **Early Phase 1**, and much
+  pharma early-phase work is simply labelled Phase 1. Full definition, thresholds and
+  terminology: `docs/phase0_definition_and_terms.md`.
+
+part2:
+  categories:
+    - name: Clin-pharm PK / DDI
+      note: >-
+        crossover and drug-drug-interaction designs (Eli Lilly / Loxo), whose SoAs carry the
+        cell-level structure this report is about. NCT05469126 (J2A-MC-GZGM) is the primary
+        evidence protocol; NCT05176314, NCT06085482 and NCT05444556 are the others of the four.
+    - name: PET receptor-occupancy / radioligand-tracer
+      note: Asceneuron, Pfizer, Takeda, Genentech, GSK — dose- and scan-anchored, some microdose tracer.
+    - name: Pharmacological- and infection-challenge
+      note: LPS, endotoxin, alcohol, amphetamine, influenza, exercise — assessments timed relative to a challenge administration.
+    - name: Imaging microdose
+      note: an optical-probe study (NCT01532024).
+    - name: Dose-escalation first-in-human — SAD and MAD
+      note: >-
+        one schedule instantiated per ascending cohort. Added 2026-09-21; the evidence for issue 6,
+        and not yet read.
+  note: |
+    Three protocols were **removed from the set on 2026-09-21** for falling outside the boundary —
+    NCT02901925 (no SoA at all), NCT03861000 (visits only), NCT04057807 (narrative plus visits).
+    All three remain in `protocol_corpus`; rejection here is a judgement about this analysis, never
+    about the corpus.
+
+part3_intro: |
+  Each issue names what the SoA shows, what that demands of the model, where it sits against the
+  twelve-pattern atlas, and the USDM verdict. **A verdict marked *traced* cites the class or rule
+  id it was traced to — the build refuses to print one that does not.**
+
+issues:
+  - number: 1
+    title: Interval / duration activities that cross day boundaries
+    evidence:
+      - lead: >-
+          A 24-hour urine collection recorded in 8-hour bins (4-hour in some studies), the bins
+          running across the study-day columns and merged to show it:
+        protocol: NCT05469126
+        quote: "`-24 to -16h, -16 to -8h, -8 to 0h, 0 to 8h, 8 to 16h, 16 to 24h` … `48 to 56h, 56 to 64h, 64 to 72h`"
+        verified: false
+        caveat: >-
+          Transcribed from a screenshot in `sources/EMP Study.docx`, a scoping document. **It is
+          not in NCT05469126's extracted SoA** — that protocol's eighteen activities include no
+          urine collection. So either the screenshot is of a different protocol, or the vision
+          extraction missed it. Unresolved, and it matters: this is the issue most likely to be
+          the genuine delta. See `docs/next_steps.md`.
+    demands: >-
+      Each bin is an activity with an explicit **start and end** — a duration, not a point. One
+      logical activity spans several day columns, and the interval can **begin before dosing**
+      (`-24 to -16h`).
+    atlas:
+      patterns: []
+      footnotes: []
+      note: Not yet placed against the atlas.
+    trace:
+      status: open
+      verdict: >-
+        USDM timing is expressed primarily as point references — a Timing relative to a reference
+        event, with a window tolerance. Whether a collection *interval* (start→end as the
+        activity's own extent, distinct from a ± scheduling window) has a first-class
+        representation, or must be modelled as two bounding timings or an activity duration, needs
+        tracing against the atlas. **This is the most likely genuine delta.
+        Do not assert it until traced.**
+
+  - number: 2
+    title: Dose-relative timing in extended-hour notation
+    evidence:
+      - lead: >-
+          PK sampling timed in running hours relative to the dose, past 24. Quoted from the
+          protocol's extracted SoA in `protocol_corpus` (`conditions`, cell-9), not from a
+          screenshot:
+        protocol: NCT05469126
+        quote: >-
+          "Period 1 Day 1: P, 0.5, 1, 2, 4, 6, 8, 12, 16; Day 2: 24 (D2), 36 (D2); Days 3-5:
+          48 (D3), 72 (D4), 96 (D5). Period 2 Day 21: P, 0.5, 1, 2, 4, 6, 8, 12, 16; Days 22-31:
+          24, 36 (D22), 48 (D23), 72 (D24), 96 (D25), 120 (D26), 168 (D28), 240 (D31)" — with
+          cell-8: *"Times are relative to LY dosing"*
+        verified: true
+      - lead: >-
+          **This settles a question the report carried for a day.** An earlier transcription ran
+          `… 96 (D5) … 120 (D26)` as one series, which cannot be measured from one dose. It is two:
+          Period 1 doses on Day 1, Period 2 on Day 21, and each restarts the clock. The running
+          hours are per period; the calendar day in parentheses is the day that offset lands on.
+          The pattern is exactly what the issue claimed — the numbers were merged, not wrong.
+    demands: >-
+      The primary coordinate is **elapsed time from dosing**; the "(D2) … (D31)" is the calendar
+      day the offset lands on — a rendering, not the stored value.
+    atlas:
+      patterns: []
+      footnotes: []
+    trace:
+      status: open
+      verdict: >-
+        Almost certainly the atlas's `pk_profile` pattern, which it maps to a dose-anchored
+        sub-timeline — and `pk_profile` is the commonest pattern in the scan at 67.6%. **Not yet
+        placed, so not traced.** If it is `pk_profile`, this is an existing pattern and not a
+        delta, and the issue leaves the report. The part that might not be `pk_profile` is the
+        per-period restart in a crossover.
+
+  - number: 3
+    title: '"P": a predose anchor in individual cells'
+    evidence:
+      - lead: >-
+          A literal `P` used as a per-cell anchor. In the extracted SoA it appears as a footnote
+          on its own (cell-2, applying to vital signs, labs, medical assessment and ECG) and
+          inside both PK series:
+        protocol: NCT05469126
+        quote: >-
+          cell-2: "P (predose)" · cell-9: "Period 1 Day 1: **P**, 0.5, 1, 2 …" and "Period 2
+          Day 21: **P**, 0.5, 1, 2 …" · cell-11: "Day -2: **P** (24 hr)" and "Day 21: **P** (24 hr)"
+        verified: true
+      - lead: >-
+          The crossover re-anchoring is visible in the data: the same `P` heads Period 1's series
+          off the Day-1 dose and Period 2's off the Day-21 dose.
+    demands: >-
+      A reusable relative anchor meaning "immediately before the dose in *this* period", resolving
+      to the correct dose administration in each period.
+    atlas:
+      patterns: []
+      footnotes: []
+    trace:
+      status: open
+      verdict: >-
+        Expected to fall inside whichever pattern carries the PK series it heads. **Not yet
+        placed.** The point to settle: in a multi-period crossover, whether the atlas's treatment
+        of relative anchors covers `P` re-resolving per period.
+
+  - number: 4
+    title: Footnote-encoded scheduling semantics
+    evidence:
+      - lead: >-
+          "Heavy usage of footnotes" is the scoping document's own phrase, and is in its text. The
+          cell shows only `Xᵇ` or `Xᶜ`; the rule sits in the footnote. Four kinds, all transcribed
+          from screenshots — windows ("within ± 1.5 hours of the scheduled time"); triplicate with
+          borrowed timing ("measured in triplicate at predose and 12h, 24h, 48h, 72h and 96h to
+          match PK collection timing"); conditional repeats ("repeated daily until resolution");
+          and ordering ("If multiple procedures take place at the same time point, the order should
+          be: ECG, vital signs, blood samples").
+        protocol: NCT05469126
+        verified: false
+        caveat: >-
+          All four are screenshot transcriptions, and **none of the four appears in NCT05469126's
+          extracted SoA** — no "± 1.5 hours", no "triplicate", no "until resolution", no
+          "ECG, vital signs, blood samples". Its eleven extracted footnotes are different ones.
+          Same unresolved question as issue 1: wrong protocol, or missed by the extractor.
+    demands: >-
+      Timing, repetition count, conditionality and ordering — carried as prose attached to a cell,
+      not as the cell mark itself.
+    atlas:
+      patterns: []
+      footnotes: []
+    trace:
+      status: open
+      verdict: >-
+        This issue is the atlas's `heavy_footnoting` pattern by description, and its four parts
+        look like four of the atlas's own footnote categories — `window_tolerance`,
+        `conditional_branch`, `sample_ordering` and something for repeat counts, which may have no
+        category. **Not yet placed.** If three of the four are existing footnote categories, only
+        the fourth is a delta, and that is the useful result.
+
+  - number: 5
+    title: Parallel timelines that start before the dose
+    evidence:
+      - lead: >-
+          A sampling series running as its own timeline, on its own zero, spanning the dose.
+          Coproporphyrin, quoted from the extracted SoA (cell-11):
+        protocol: NCT05469126
+        quote: >-
+          "0 hr sample at approximately 8 am. Note: Predose sample on Days 20 and 21 will be taken
+          prior to clarithromycin administration. Baseline Day -1: 0, 0.5, 1, 2, 4, 6, 8, 12, 16
+          hr; Day -2: P (24 hr). Period 2 Days 15-20: P, 0.5, 1, 2, 4, 6, 8, 12, 16 hr (D20);
+          Day 21: P (24 hr)."
+        verified: true
+      - lead: >-
+          **This is the issue the scoping document was written to raise** — a monitoring series
+          spanning visits and days. Note its zero is 8 am on Day -1, not a dose, and the series
+          runs across both the clarithromycin and the LY administrations.
+    demands: >-
+      A **second timeline alongside** the main dose-anchored one, whose zero is not the dose and
+      which spans the dosing moment.
+    atlas:
+      patterns: []
+      footnotes: []
+    trace:
+      status: open
+      verdict: >-
+        Closest atlas candidates are `subsidiary_tables` and the asynchronous-timeline mechanism.
+        **Not yet placed.** The angle to settle is whether the atlas covers a sub-timeline whose
+        anchor *precedes* the main timeline's anchor.
+
+  - number: 6
+    title: Dose-escalation cohorts — the same schedule, re-run per cohort
+    evidence:
+      - lead: >-
+          A SAD or MAD study prints **one** SoA and runs it **many times**: cohort 1 at the lowest
+          dose, cohort 2 at the next, each cohort's schedule identical but for the dose and the
+          calendar it runs on. The table carries no cohort column — that dimension lives in the
+          design narrative and the footnotes. With it come sentinel dosing (a pair dosed first, the
+          rest after a stated interval — a within-cohort split with its own offset), escalation
+          decision gates (cohort *n+1* conditional on the safety review of cohort *n*), and, in
+          MAD, repeat dosing days with a full PK profile on the first and last only and the middle
+          collapsed into one spanning cell.
+        protocol: NCT04586920
+        verified: false
+        caveat: >-
+          Structural description from the design, not yet from the SoA. Twelve ascending-dose
+          protocols are in the set and **none has been read**; NCT04586920 carries a
+          reviewer-confirmed count of 6 timelines, the highest, and what drives that is not
+          established.
+    demands: >-
+      A cohort or dose-level dimension over an otherwise identical schedule, plus a place for the
+      escalation gate to live.
+    atlas:
+      patterns: []
+      footnotes: []
+    trace:
+      status: open
+      verdict: >-
+        `multi_track` is the nearest atlas pattern, at 1.0% the rarest in the scan — which is
+        itself a reason to expect thin coverage here. Whether ascending cohorts are multi_track,
+        or something the atlas has no pattern for, is the question. **Not yet placed, evidence not
+        yet read. Nothing about this issue may be stated as a finding.**
+
+conclusion: |
+  The honest position is that **no issue in this report is finished**, though three are now
+  grounded in the protocol's own extracted SoA rather than in screenshots. None has been mapped
+  against the twelve-pattern atlas, which is the comparison the whole report is framed on, and
+  none carries a USDM verdict traced to a class or rule id. Three of them (2, 3 and 5) have a
+  reasoned expectation recorded in `docs/lessons_learned.md` that they fall to mechanisms already
+  understood — but a reasoned expectation is what this project has twice had to retract.
+
+  The candidate deltas, on the evidence so far, are **issue 1** (an interval with explicit start
+  and end, spanning columns) and **parts of issue 4** (repeat counts, conditional repeats,
+  co-timed ordering) — and both now carry a prior question, because neither's evidence appears in
+  the protocol they are attributed to. **Issue 6** is unknown until the ascending-dose protocols
+  are read.
+
+  The order of work is in `docs/next_steps.md`: settle where issues 1 and 4's evidence actually
+  comes from, then place all six against the atlas. Placing a mis-attributed issue is worse than
+  doing nothing.
+
+references:
+  - "Companion report: `protocol_soa_patterns/docs/reports/soa_patterns.html` — SoA and Footnote Patterns."
+  - "Aims, scope boundary and what counts as done: `docs/aims.md`."
+  - "Study type, terminology and the issue catalogue: `docs/phase0_definition_and_terms.md`."
+  - "Protocol set: `docs/project_protocols.md`."
+  - "Scoping document: `sources/EMP Study.docx` (notes and SoA screenshots, incl. NCT05469126 / J2A-MC-GZGM)."
+  - "Prior USDM tracing and SoA-shape findings: `docs/lessons_learned.md`."
